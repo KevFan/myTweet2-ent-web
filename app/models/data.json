@@ -1,0 +1,56 @@
+{
+  "users": {
+    "_model": "User",
+    "homer": {
+      "firstName": "Homer",
+      "lastName": "Simpson",
+      "email": "homer@simpson.com",
+      "password": "secret"
+    },
+    "marge": {
+      "firstName": "Marge",
+      "lastName": "Simpson",
+      "email": "marge@simpson.com",
+      "password": "secret"
+    },
+    "bart": {
+      "firstName": "Bart",
+      "lastName": "Simpson",
+      "email": "bart@simpson.com",
+      "password": "secret"
+    }
+  },
+  "admins": {
+    "_model": "Admin",
+    "one": {
+      "firstName": "Admin",
+      "lastName": "Simpson",
+      "email": "admin@simpson.com",
+      "password": "secret"
+    },
+    "two": {
+      "firstName": "Grandpa",
+      "lastName": "Simpson",
+      "email": "grandpa@simpson.com",
+      "password": "secret"
+    }
+  },
+  "tweets": {
+    "_model": "Tweet",
+    "one": {
+      "tweetText": "First Tweet Test",
+      "tweetDate": "2017-07-31 22:04:00.000Z",
+      "tweetUser": "->users.homer"
+    },
+    "two": {
+      "tweetText": "Second Tweet Test",
+      "tweetDate": "2017-08-31 16:19:00.000Z",
+      "tweetUser": "->users.homer"
+    },
+    "three": {
+      "tweetText": "Third Tweet Test",
+      "tweetDate": "2017-09-16 20:54:00.000Z",
+      "tweetUser": "->users.marge"
+    }
+  }
+}

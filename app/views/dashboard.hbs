@@ -1,0 +1,32 @@
+{{#if isAdmin}}
+  {{> menuAdmin _id='dashboard'}}
+{{else}}
+  {{> menuUser _id="dashboard"}}
+{{/if}}
+
+<section class="ui stackable grid">
+  <aside class="ui center aligned four wide column">
+    <div class="ui segment">
+      <i class="massive user icon"></i>
+      <p>{{user.firstName}} {{user.lastName}}</p>
+      <p>{{user.email}}</p>
+    </div>
+  </aside>
+  <div class="ui twelve wide column">
+    {{#if isCurrentUser}}
+      <div class="ui center aligned basic segment">
+        <button class="circular ui icon blue button item" data-modal="addTweet">
+          <i class="plus icon"></i>
+        </button>
+        <a href="/deleteAllUserTweets/{{user._id}}">
+          <button class="circular ui icon red button">
+            <i class="trash icon"></i>
+          </button>
+        </a>
+      </div>
+    {{/if}}
+    {{> listTweets}}
+  </div>
+</section>
+
+{{> addTweet}}

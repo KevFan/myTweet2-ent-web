@@ -1,0 +1,36 @@
+<div class="ui container">
+  {{#if tweets}}
+    <div class="ui centered three doubling stackable cards">
+      {{#each tweets}}
+        <div class="ui raised card">
+          <div class="content">
+            <div class="meta">
+              <i class="calendar icon"></i> <span class="category">{{formatDate tweetDate}}</span>
+            </div>
+            <div class="description">
+              <p>{{tweetText}}</p>
+            </div>
+          </div>
+          <div class="extra content">
+            <div class="left floated author">
+              <a href="/view/{{tweetUser._id}}">
+                <i class=" blue user icon"></i> {{tweetUser.firstName}} {{tweetUser.lastName}}
+              </a>
+            </div>
+            {{#if ../isCurrentUser}}
+              <div class="right floated">
+                <a href="/deleteSpecificTweet/{{../user.id}}/{{_id}}">
+                  <i class="red delete icon"></i>
+                </a>
+              </div>
+            {{/if}}
+          </div>
+        </div>
+      {{/each}}
+    </div>
+  {{else}}
+    <section class="ui center aligned segment">
+      You have no tweets yet. Start tweeting now to begin !!
+    </section>
+  {{/if}}
+</div>

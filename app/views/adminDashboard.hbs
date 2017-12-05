@@ -1,0 +1,21 @@
+{{> menuAdmin _id='dashboard'}}
+
+<section class="ui center aligned basic segment">
+  <button class="circular ui icon blue button item" data-modal="addUser">
+    <i class="plus icon"></i>
+  </button>
+  <a href="/deleteAllUserAndTweets">
+    <button class="circular ui icon red button">
+      <i class="trash icon"></i>
+    </button>
+  </a>
+</section>
+
+{{> listUsers}}
+
+<section class="ui modal" id="addUser"> <i class="close icon"></i>
+  <header class="header">Add new user</header>
+  <div class="ui content form">
+  {{> addUser role='admin'}}
+  </div>
+</section>

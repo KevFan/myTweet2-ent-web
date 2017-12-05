@@ -1,0 +1,38 @@
+{
+  "name": "mytweet-web",
+  "version": "1.0.0",
+  "description": "enterprise web development assignment 1",
+  "main": "index.js",
+  "scripts": {
+    "start": "node index.js",
+    "test": "mocha/bin/mocha --ui tdd ./test/*.js --reporter mochawesome --timeout 15000"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/KevFan/myTweet-enterprise-web.git"
+  },
+  "author": "Kevin Fan",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/KevFan/myTweet-enterprise-web/issues"
+  },
+  "homepage": "https://github.com/KevFan/myTweet-enterprise-web#readme",
+  "dependencies": {
+    "boom": "^6.0.0",
+    "handlebars": "^4.0.10",
+    "hapi": "^16.6.2",
+    "hapi-auth-cookie": "^7.0.0",
+    "inert": "^4.2.1",
+    "joi": "^11.3.4",
+    "moment": "^2.19.1",
+    "mongoose": "^4.12.1",
+    "mongoose-seeder": "^1.2.1",
+    "vision": "^4.1.1"
+  },
+  "devDependencies": {
+    "chai": "^4.1.2",
+    "mocha": "^4.0.1",
+    "mochawesome": "^2.3.1",
+    "sync-request": "^4.1.0"
+  }
+}

@@ -1,0 +1,16 @@
+{{#if isAdmin}}
+  {{> menuAdmin _id='settings'}}
+{{else}}
+  {{> menuUser _id="settings"}}
+{{/if}}
+
+<section class="ui stackable grid">
+  <aside class="ui middle aligned center aligned six wide column">
+    <i class="massive settings icon"></i>
+  </aside>
+  <section class="ui ten wide column">
+    <div class="ui fluid form segment">
+      {{> updateSettings}}
+    </div>
+  </section>
+</section>
