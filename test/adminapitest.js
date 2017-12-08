@@ -1,141 +1,72 @@
 'use strict';
 
 const assert = require('chai').assert;
-const request = require('sync-request');
+const TweetService = require('./tweet-service');
+const fixtures = require('./fixtures.json');
+const _ = require('lodash');
 
 suite('Admin API tests', function () {
-  // For tests using a seeding model, may be before to drop and re-seed after each test
+  let admins = fixtures.admins;
+  let newAdmin = fixtures.newAdmin;
 
-  test('get admins', function () {
+  const tweetService = new TweetService('http://localhost:4000');
 
-    const url = 'http://localhost:4000/api/admins';
-    const res = request('GET', url);
-    const admins = JSON.parse(res.getBody('utf8'));
-
-    assert.equal(2, admins.length);
-
-    assert.equal(admins[0].firstName, 'Admin');
-    assert.equal(admins[0].lastName, 'Simpson');
-    assert.equal(admins[0].email, 'admin@simpson.com');
-    assert.equal(admins[0].password, 'secret');
-
-    assert.equal(admins[1].firstName, 'Grandpa');
-    assert.equal(admins[1].lastName, 'Simpson');
-    assert.equal(admins[1].email, 'grandpa@simpson.com');
-    assert.equal(admins[1].password, 'secret');
-
+  beforeEach(function () {
+    tweetService.deleteAllAdmins();
   });
 
-  test('get one admin', function () {
-
-    const allAdminsUrl = 'http://localhost:4000/api/admins';
-    let res = request('GET', allAdminsUrl);
-    const admins = JSON.parse(res.getBody('utf8'));
-
-    const oneAdminUrl = allAdminsUrl + '/' + admins[0]._id;
-    res = request('GET', oneAdminUrl);
-    const oneAdmin = JSON.parse(res.getBody('utf8'));
-
-    assert.equal(oneAdmin.firstName, 'Admin');
-    assert.equal(oneAdmin.lastName, 'Simpson');
-    assert.equal(oneAdmin.email, 'admin@simpson.com');
-    assert.equal(oneAdmin.password, 'secret');
-
+  afterEach(function () {
+    tweetService.deleteAllAdmins();
   });
 
   test('create an admin', function () {
-
-    const adminsUrl = 'http://localhost:4000/api/admins';
-    const newAdmin = {
-      firstName: 'Kevin',
-      lastName: 'Fan',
-      email: 'kevintest@email.com',
-      password: 'secret',
-    };
-
-    const res = request('POST', adminsUrl, { json: newAdmin });
-    const returnedAdmin = JSON.parse(res.getBody('utf8'));
-
-    assert.equal(returnedAdmin.firstName, 'Kevin');
-    assert.equal(returnedAdmin.lastName, 'Fan');
-    assert.equal(returnedAdmin.email, 'kevintest@email.com');
-    assert.equal(returnedAdmin.password, 'secret');
-
+    const returnedAdmin = tweetService.createAdmin(newAdmin);
+    assert(_.some([returnedAdmin], newAdmin), 'returnedAdmin must be a superset of of newAdmin');
+    assert.isDefined(returnedAdmin._id);
   });
 
-  test('update an admin', function () {
-
-    const allAdminsUrl = 'http://localhost:4000/api/admins';
-    let res = request('GET', allAdminsUrl);
-    const admins = JSON.parse(res.getBody('utf8'));
-
-    const oneAdminUrl = allAdminsUrl + '/' + admins[0]._id;
-    res = request('GET', oneAdminUrl);
-    const oneAdmin = JSON.parse(res.getBody('utf8'));
-
-    assert.equal(oneAdmin.firstName, 'Admin');
-    assert.equal(oneAdmin.lastName, 'Simpson');
-    assert.equal(oneAdmin.email, 'admin@simpson.com');
-    assert.equal(oneAdmin.password, 'secret');
-
-    oneAdmin.firstName = 'Update';
-    const updateUserUrl = allAdminsUrl + '/' + oneAdmin._id;
-    res = request('PUT', updateUserUrl, { json: oneAdmin });
-    const returnedUser = JSON.parse(res.getBody('utf8'));
-    assert.equal(returnedUser.firstName, 'Update');
-    assert.equal(returnedUser.lastName, 'Simpson');
-    assert.equal(returnedUser.email, 'admin@simpson.com');
-    assert.equal(returnedUser.password, 'secret');
-
+  test('get admin', function () {
+    const admin1 = tweetService.createAdmin(newAdmin);
+    const admin2 = tweetService.getAdmin(admin1._id);
+    assert.deepEqual(admin1, admin2);
   });
 
-  test('delete an admin', function () {
-
-    // Get all the users
-    const allAdminsUrl = 'http://localhost:4000/api/admins';
-    const res = request('GET', allAdminsUrl);
-    const admins = JSON.parse(res.getBody('utf8'));
-
-    // Test first user name is currently Update Simpson due to put test
-    assert.equal(admins[0].firstName, 'Update');
-    assert.equal(admins[0].lastName, 'Simpson');
-    assert.equal(admins[0].email, 'admin@simpson.com');
-    assert.equal(admins[0].password, 'secret');
-
-    // Delete the first user - Homer
-    const deleteAnAdminUrl = allAdminsUrl + '/' + admins[0]._id;
-    request('DELETE', deleteAnAdminUrl);
-
-    // Get new list of all users
-    const newAllAdminList = JSON.parse(request('GET', allAdminsUrl).getBody('utf8'));
-
-    // Should have 2 admins remaining due to one created at post test
-    assert.equal(2, newAllAdminList.length);
-    assert.equal(newAllAdminList[0].firstName, 'Grandpa');
-    assert.equal(newAllAdminList[0].lastName, 'Simpson');
-    assert.equal(newAllAdminList[0].email, 'grandpa@simpson.com');
-    assert.equal(newAllAdminList[0].password, 'secret');
+  test('get invalid admin', function () {
+    const admin1 = tweetService.getAdmin('1234');
+    assert.isNull(admin1);
+    const admin2 = tweetService.getAdmin('012345678901234567890123');
+    assert.isNull(admin2);
   });
 
-  test('delete all admins', function () {
+  test('delete a admin', function () {
+    const admin = tweetService.createAdmin(newAdmin);
+    assert(tweetService.getAdmin(admin._id) != null);
+    tweetService.deleteOneAdmin(admin._id);
+    assert(tweetService.getAdmin(admin._id) == null);
+  });
 
-    // Get all the admins
-    const allAdminsUrl = 'http://localhost:4000/api/admins';
-    const res = request('GET', allAdminsUrl);
-    const admins = JSON.parse(res.getBody('utf8'));
+  test('get all admins', function () {
+    for (let admin of admins) {
+      tweetService.createAdmin(admin);
+    }
 
-    // Test first admin is currently Grandpa after deleting Admin
-    assert.equal(admins[0].firstName, 'Grandpa');
-    assert.equal(admins[0].lastName, 'Simpson');
-    assert.equal(admins[0].email, 'grandpa@simpson.com');
-    assert.equal(admins[0].password, 'secret');
+    const allAdmin = tweetService.getAdmins();
+    assert.equal(allAdmin.length, admins.length);
+  });
 
-    // Delete all admins
-    request('DELETE', allAdminsUrl);
+  test('get admins detail', function () {
+    for (let admin of admins) {
+      tweetService.createAdmin(admin);
+    }
 
-    // Get new list of all admins
-    const newListOfAdmins = JSON.parse(request('GET', allAdminsUrl).getBody('utf8'));
+    const allAdmin = tweetService.getAdmins();
+    for (let i = 0; i < admins.length; i++) {
+      assert(_.some([allAdmin[i]], admins[i]), 'admin in allAdmin must be a superset of admins at same index');
+    }
+  });
 
-    assert.equal(0, newListOfAdmins.length);
+  test('get all admins empty', function () {
+    const allAdmins = tweetService.getAdmins();
+    assert.equal(allAdmins.length, 0);
   });
 });
