@@ -20,10 +20,30 @@
       "password": "secret"
     }
   ],
+  "admins": [
+    {
+      "firstName": "Admin",
+      "lastName": "Simpson",
+      "email": "admin@simpson.com",
+      "password": "secret"
+    },
+    {
+      "firstName": "Grandpa",
+      "lastName": "Simpson",
+      "email": "grandpa@simpson.com",
+      "password": "secret"
+    }
+  ],
   "newUser": {
     "firstName": "Maggie",
     "lastName": "Simpson",
     "email": "maggie@simpson.com",
+    "password": "secret"
+  },
+  "newAdmin": {
+    "firstName": "NewAdmin",
+    "lastName": "Simpson",
+    "email": "newAdmin@simpson.com",
     "password": "secret"
   }
 }

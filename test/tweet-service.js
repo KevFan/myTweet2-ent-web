@@ -40,6 +40,26 @@ class TweetService {
   deleteOneUser(id) {
     return this.httpService.delete('/api/users/' + id);
   }
+
+  getAdmins() {
+    return this.httpService.get('/api/admins');
+  }
+
+  getAdmin(id) {
+    return this.httpService.get('/api/admins/' + id);
+  }
+
+  createAdmin(newAdmin) {
+    return this.httpService.post('/api/admins', newAdmin);
+  }
+
+  deleteAllAdmins() {
+    return this.httpService.delete('/api/admins');
+  }
+
+  deleteOneAdmin(id) {
+    return this.httpService.delete('/api/admins/' + id);
+  }
 }
 
 module.exports = TweetService;
