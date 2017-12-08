@@ -9,6 +9,7 @@ class TweetService {
     this.httpService = new SyncHttpService(baseUrl);
   }
 
+  // Tweets
   getTweets() {
     return this.httpService.get('/api/tweets');
   }
@@ -17,10 +18,27 @@ class TweetService {
     return this.httpService.get('/api/tweets/' + id);
   }
 
+  getUserTweets(userId) {
+    return this.httpService.get('/api/tweets/users/' + userId);
+  }
+
   createTweet(newTweet) {
     return this.httpService.post('/api/tweets', newTweet);
   }
 
+  deleteAllTweets() {
+    return this.httpService.delete('/api/tweets');
+  }
+
+  deleteOneTweet(id) {
+    return this.httpService.delete('/api/tweets/' + id);
+  }
+
+  deleteAllUserTweets(userId) {
+    return this.httpService.delete('/api/tweets/users/' + userId);
+  }
+
+  // Users
   getUsers() {
     return this.httpService.get('/api/users');
   }
@@ -41,6 +59,7 @@ class TweetService {
     return this.httpService.delete('/api/users/' + id);
   }
 
+  // Admins
   getAdmins() {
     return this.httpService.get('/api/admins');
   }

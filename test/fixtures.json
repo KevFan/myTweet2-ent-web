@@ -34,6 +34,20 @@
       "password": "secret"
     }
   ],
+  "tweets": [
+    {
+      "tweetText": "Tweet Test 1",
+      "tweetDate": "2017-07-31T22:04:00.000Z"
+    },
+    {
+      "tweetText": "Tweet Test 2",
+      "tweetDate": "2017-08-31T16:19:00.000Z"
+    },
+    {
+      "tweetText": "Tweet Test 3",
+      "tweetDate": "2017-09-16T20:54:00.000Z"
+    }
+  ],
   "newUser": {
     "firstName": "Maggie",
     "lastName": "Simpson",
