@@ -18,6 +18,13 @@ suite('User API tests', function () {
     assert.isDefined(returnedUser._id);
   });
 
+  test('delete a user', function () {
+    const user = tweetService.createUser(newUser);
+    assert(tweetService.getUser(user._id) != null);
+    tweetService.deleteOneUser(user._id);
+    assert(tweetService.getUser(user._id) == null);
+  });
+
   // test('get users', function () {
   //   for (let user of users) {
   //
@@ -67,34 +74,7 @@ suite('User API tests', function () {
   //   assert.equal(returnedUser.password, 'secret');
   //
   // });
-  //
-  // test('delete a user', function () {
-  //
-  //   // Get all the users
-  //   const allUsersUrl = 'http://localhost:4000/api/users';
-  //   const res = request('GET', allUsersUrl);
-  //   const users = JSON.parse(res.getBody('utf8'));
-  //
-  //   // Test first user name is currently Update Simpson due to put test
-  //   assert.equal(users[0].firstName, 'Update');
-  //   assert.equal(users[0].lastName, 'Simpson');
-  //   assert.equal(users[0].email, 'homer@simpson.com');
-  //   assert.equal(users[0].password, 'secret');
-  //
-  //   // Delete the first user - Homer
-  //   const deleteAUserUrl = allUsersUrl + '/' + users[0]._id;
-  //   request('DELETE', deleteAUserUrl);
-  //
-  //   // Get new list of all users
-  //   const newAllUserList = JSON.parse(request('GET', 'http://localhost:4000/api/users').getBody('utf8'));
-  //
-  //   assert.equal(3, newAllUserList.length);
-  //   assert.equal(newAllUserList[0].firstName, 'Marge');
-  //   assert.equal(newAllUserList[0].lastName, 'Simpson');
-  //   assert.equal(newAllUserList[0].email, 'marge@simpson.com');
-  //   assert.equal(newAllUserList[0].password, 'secret');
-  // });
-  //
+
   // test('delete all users', function () {
   //
   //   // Get all the users
