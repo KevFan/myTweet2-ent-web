@@ -40,16 +40,16 @@
             </button>
           </a>
         {{else}}
-          <form action="/follow" method="POST">
+          <form action="/follow" method="POST" style="display: inline;">
             <button name="following" value="{{user._id}}" class="circular ui icon teal button item">
               <i class="add user icon"></i>
             </button>
           </form>
-          <form>
+          <a href="/follow/{{user._id}}">
             <button class="circular ui icon red button item">
               <i class="remove user icon"></i>
             </button>
-          </form>
+          </a>
         {{/if}}
       </div>
     {{> listTweets}}

@@ -18,3 +18,14 @@ exports.follow = {
     });
   },
 };
+
+exports.unfollow = {
+  handler: function (request, reply) {
+    Follow.remove({ follower: request.auth.credentials.loggedInUser, following: request.params.id}).then(unFollowed => {
+      reply.redirect('/home');
+    }).catch(err => {
+      console.log(err);
+      reply.redirect('/home');
+    });
+  },
+};

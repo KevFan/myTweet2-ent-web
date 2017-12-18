@@ -29,6 +29,7 @@ module.exports = [
   { method: 'GET', path: '/deleteAllUserAndTweets', config: Admin.deleteAllUserAndTweets },
 
   { method: 'POST', path: '/follow', config: Follow.follow },
+  { method: 'GET', path: '/follow/{id}', config: Follow.unfollow },
 
   {
     method: 'GET',
