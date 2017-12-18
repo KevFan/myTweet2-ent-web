@@ -11,7 +11,7 @@ exports.follow = {
     followData.follower = request.auth.credentials.loggedInUser;
     console.log(followData);
     Follow.create(followData).then(newFollowing => {
-      reply.redirect('/home');
+      reply.redirect('/view/' + followData.following);
     }).catch(err => {
       console.log(err);
       reply.redirect('/home');
@@ -21,8 +21,8 @@ exports.follow = {
 
 exports.unfollow = {
   handler: function (request, reply) {
-    Follow.remove({ follower: request.auth.credentials.loggedInUser, following: request.params.id}).then(unFollowed => {
-      reply.redirect('/home');
+    Follow.remove({ follower: request.auth.credentials.loggedInUser, following: request.params.id }).then(unFollowed => {
+      reply.redirect('/view/' + request.params.id);
     }).catch(err => {
       console.log(err);
       reply.redirect('/home');

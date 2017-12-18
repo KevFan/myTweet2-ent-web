@@ -129,16 +129,26 @@ exports.viewUserTimeline = {
       reply.redirect('/home');
     } else {
       let tweetsFound = null;
+      let user = null;
+      let followings = null;
       Tweet.find({ tweetUser: userId }).populate('tweetUser').then(userTweets => {
         console.log('Successfully found all tweets with user id: ' + userId);
         tweetsFound = sortHelper.sortDateTimeNewToOld(userTweets);
         return User.findOne({ _id: userId });
       }).then(foundUser => {
+        user = foundUser;
+        return Follow.find({ follower: userId }).populate('following');
+      }).then(foundFollowings => {
+        followings = foundFollowings;
+        return Follow.find({ following: userId }).populate('follower');
+      }).then(foundFollowers => {
         reply.view('dashboard', {
-          title: foundUser.firstName + ' ' + foundUser.lastName + ' | TimeLine',
+          title: user.firstName + ' ' + user.lastName + ' | TimeLine',
           tweets: tweetsFound,
-          user: foundUser,
+          user: user,
           isCurrentUser: false,
+          followers: foundFollowers,
+          following: followings,
         });
       }).catch(err => {
         console.log('Tried to view all tweets with user id : ' + userId + ' but something went wrong :(');
