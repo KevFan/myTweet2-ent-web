@@ -1,6 +1,7 @@
 'use strict';
 const User = require('../models/user');
 const Tweet = require('../models/tweet');
+const Follow = require('../models/follow');
 const sortHelper = require('../utils/sort');
 
 /**
@@ -10,17 +11,28 @@ exports.home = {
   handler: function (request, reply) {
     const userId = request.auth.credentials.loggedInUser;
     let userTweets = null;
+    let user = null;
+    let followers = null;
     Tweet.find({ tweetUser: userId }).populate('tweetUser').then(allUserTweets => {
       userTweets = sortHelper.sortDateTimeNewToOld(allUserTweets);
       return User.findOne({ _id: userId });
     }).then(foundUser => {
+      user = foundUser;
+      return Follow.find({ follower: userId }).populate('following');
+    }).then(foundFollowers => {
+      followers = foundFollowers;
+      return Follow.find({ following: userId }).populate('follower');
+    }).then(foundFollowing => {
       reply.view('dashboard', {
         title: 'Tweet | Dashboard',
         tweets: userTweets,
-        user: foundUser,
+        user: user,
         isCurrentUser: true,
+        followers: followers,
+        following: foundFollowing,
       });
     }).catch(err => {
+      console.log(err);
       reply.redirect('/');
     });
   },

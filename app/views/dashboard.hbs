@@ -11,6 +11,22 @@
       <p>{{user.firstName}} {{user.lastName}}</p>
       <p>{{user.email}}</p>
     </div>
+    <div class="ui segment">
+      <p>Followers</p>
+      <ul>
+        {{#each followers}}
+          <li>{{following.firstName}} {{following.lastName}}</li>
+        {{/each}}
+      </ul>
+    </div>
+    <div class="ui segment">
+      <p>Following</p>
+      <ul>
+        {{#each following}}
+          <li>{{follower.firstName}} {{follower.lastName}}</li>
+        {{/each}}
+      </ul>
+    </div>
   </aside>
   <div class="ui twelve wide column">
     {{#if isCurrentUser}}
