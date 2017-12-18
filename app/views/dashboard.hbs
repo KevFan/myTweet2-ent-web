@@ -15,7 +15,7 @@
       <p>Followers</p>
       <ul>
         {{#each followers}}
-          <li>{{following.firstName}} {{following.lastName}}</li>
+          <li>{{follower.firstName}} {{follower.lastName}}</li>
         {{/each}}
       </ul>
     </div>
@@ -23,24 +23,35 @@
       <p>Following</p>
       <ul>
         {{#each following}}
-          <li>{{follower.firstName}} {{follower.lastName}}</li>
+          <li>{{following.firstName}} {{following.lastName}}</li>
         {{/each}}
       </ul>
     </div>
   </aside>
   <div class="ui twelve wide column">
-    {{#if isCurrentUser}}
       <div class="ui center aligned basic segment">
-        <button class="circular ui icon blue button item" data-modal="addTweet">
-          <i class="plus icon"></i>
-        </button>
-        <a href="/deleteAllUserTweets/{{user._id}}">
-          <button class="circular ui icon red button">
-            <i class="trash icon"></i>
+        {{#if isCurrentUser}}
+          <button class="circular ui icon blue button item" data-modal="addTweet">
+            <i class="plus icon"></i>
           </button>
-        </a>
+          <a href="/deleteAllUserTweets/{{user._id}}">
+            <button class="circular ui icon red button">
+              <i class="trash icon"></i>
+            </button>
+          </a>
+        {{else}}
+          <form action="/follow" method="POST">
+            <button name="following" value="{{user._id}}" class="circular ui icon teal button item">
+              <i class="add user icon"></i>
+            </button>
+          </form>
+          <form>
+            <button class="circular ui icon red button item">
+              <i class="remove user icon"></i>
+            </button>
+          </form>
+        {{/if}}
       </div>
-    {{/if}}
     {{> listTweets}}
   </div>
 </section>

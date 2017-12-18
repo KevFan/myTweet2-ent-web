@@ -12,24 +12,24 @@ exports.home = {
     const userId = request.auth.credentials.loggedInUser;
     let userTweets = null;
     let user = null;
-    let followers = null;
+    let followings = null;
     Tweet.find({ tweetUser: userId }).populate('tweetUser').then(allUserTweets => {
       userTweets = sortHelper.sortDateTimeNewToOld(allUserTweets);
       return User.findOne({ _id: userId });
     }).then(foundUser => {
       user = foundUser;
       return Follow.find({ follower: userId }).populate('following');
-    }).then(foundFollowers => {
-      followers = foundFollowers;
+    }).then(foundFollowings => {
+      followings = foundFollowings;
       return Follow.find({ following: userId }).populate('follower');
-    }).then(foundFollowing => {
+    }).then(foundFollowers => {
       reply.view('dashboard', {
         title: 'Tweet | Dashboard',
         tweets: userTweets,
         user: user,
         isCurrentUser: true,
-        followers: followers,
-        following: foundFollowing,
+        followers: foundFollowers,
+        following: followings,
       });
     }).catch(err => {
       console.log(err);
