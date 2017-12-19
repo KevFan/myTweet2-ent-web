@@ -26,7 +26,11 @@ exports.findOne = {
 
   handler: function (request, reply) {
     Admin.findOne({ _id: request.params.id }).then(admin => {
-      reply(admin);
+      if (admin) {
+        reply(admin);
+      }
+
+      reply(Boom.notFound('id not found'));
     }).catch(err => {
       reply(Boom.notFound('id not found'));
     });

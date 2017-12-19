@@ -1,0 +1,63 @@
+{
+  "donationService": "https://stormy-brushlands-56991.herokuapp.com",
+  "users": [
+    {
+      "firstName": "Homer",
+      "lastName": "Simpson",
+      "email": "homer@simpson.com",
+      "password": "secret"
+    },
+    {
+      "firstName": "Marge",
+      "lastName": "Simpson",
+      "email": "marge@simpson.com",
+      "password": "secret"
+    },
+    {
+      "firstName": "Bart",
+      "lastName": "Simpson",
+      "email": "bart@simpson.com",
+      "password": "secret"
+    }
+  ],
+  "admins": [
+    {
+      "firstName": "Admin",
+      "lastName": "Simpson",
+      "email": "admin@simpson.com",
+      "password": "secret"
+    },
+    {
+      "firstName": "Grandpa",
+      "lastName": "Simpson",
+      "email": "grandpa@simpson.com",
+      "password": "secret"
+    }
+  ],
+  "tweets": [
+    {
+      "tweetText": "Tweet Test 1",
+      "tweetDate": "2017-07-31T22:04:00.000Z"
+    },
+    {
+      "tweetText": "Tweet Test 2",
+      "tweetDate": "2017-08-31T16:19:00.000Z"
+    },
+    {
+      "tweetText": "Tweet Test 3",
+      "tweetDate": "2017-09-16T20:54:00.000Z"
+    }
+  ],
+  "newUser": {
+    "firstName": "Maggie",
+    "lastName": "Simpson",
+    "email": "maggie@simpson.com",
+    "password": "secret"
+  },
+  "newAdmin": {
+    "firstName": "NewAdmin",
+    "lastName": "Simpson",
+    "email": "newAdmin@simpson.com",
+    "password": "secret"
+  }
+}
