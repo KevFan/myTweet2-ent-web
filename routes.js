@@ -2,6 +2,7 @@ const Accounts = require('./app/controllers/accounts');
 const Assets = require('./app/controllers/assets');
 const Tweets = require('./app/controllers/tweets');
 const Admin = require('./app/controllers/master');
+const Follow = require('./app/controllers/follow');
 const handleBarHelpers = require('./app/controllers/handlebarHelpers');
 
 module.exports = [
@@ -26,6 +27,9 @@ module.exports = [
   { method: 'GET', path: '/deleteUser/{id}', config: Admin.deleteUser },
   { method: 'GET', path: '/viewUser/{id}', config: Admin.viewUser },
   { method: 'GET', path: '/deleteAllUserAndTweets', config: Admin.deleteAllUserAndTweets },
+
+  { method: 'POST', path: '/follow', config: Follow.follow },
+  { method: 'GET', path: '/follow/{id}', config: Follow.unfollow },
 
   {
     method: 'GET',

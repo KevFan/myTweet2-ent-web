@@ -1,6 +1,7 @@
 'use strict';
 const User = require('../models/user');
 const Tweet = require('../models/tweet');
+const Follow = require('../models/follow');
 const sortHelper = require('../utils/sort');
 
 /**
@@ -9,18 +10,38 @@ const sortHelper = require('../utils/sort');
 exports.home = {
   handler: function (request, reply) {
     const userId = request.auth.credentials.loggedInUser;
-    let userTweets = null;
-    Tweet.find({ tweetUser: userId }).populate('tweetUser').then(allUserTweets => {
-      userTweets = sortHelper.sortDateTimeNewToOld(allUserTweets);
-      return User.findOne({ _id: userId });
-    }).then(foundUser => {
+    let followers = null;
+    let user = null;
+    let followings = null;
+
+    User.findOne({ _id: userId }).then(foundUser => {
+      user = foundUser;
+      return Follow.find({ follower: userId }).populate('following');
+    }).then(foundFollowings => {
+      followings = foundFollowings;
+      return Follow.find({ following: userId }).populate('follower');
+    }).then(foundFollowers => {
+      followers = foundFollowers;
+
+      // Array of userIds for to find/merge following tweets
+      let userIds = [];
+      userIds.push(userId);
+      for (let following of followings) {
+        userIds.push(following.following._id);
+      }
+
+      return Tweet.find({ tweetUser: { $in: userIds } }).populate('tweetUser');
+    }).then(foundTweets => {
       reply.view('dashboard', {
         title: 'Tweet | Dashboard',
-        tweets: userTweets,
-        user: foundUser,
+        tweets: sortHelper.sortDateTimeNewToOld(foundTweets),
+        user: user,
         isCurrentUser: true,
+        followers: followers,
+        following: followings,
       });
     }).catch(err => {
+      console.log(err);
       reply.redirect('/');
     });
   },
@@ -116,17 +137,35 @@ exports.viewUserTimeline = {
     if (userId === request.auth.credentials.loggedInUser) {
       reply.redirect('/home');
     } else {
-      let tweetsFound = null;
-      Tweet.find({ tweetUser: userId }).populate('tweetUser').then(userTweets => {
-        console.log('Successfully found all tweets with user id: ' + userId);
-        tweetsFound = sortHelper.sortDateTimeNewToOld(userTweets);
-        return User.findOne({ _id: userId });
-      }).then(foundUser => {
+      // let tweetsFound = null;
+      let user = null;
+      let followings = null;
+      let followers = null;
+      User.findOne({ _id: userId }).then(foundUser => {
+        user = foundUser;
+        return Follow.find({ follower: userId }).populate('following');
+      }).then(foundFollowings => {
+        followings = foundFollowings;
+        return Follow.find({ following: userId }).populate('follower');
+      }).then(foundFollowers => {
+        followers = foundFollowers;
+
+        // Array of userIds for to find/merge following tweets
+        let userIds = [];
+        userIds.push(userId);
+        for (let following of followings) {
+          userIds.push(following.following._id);
+        }
+
+        return Tweet.find({ tweetUser: { $in: userIds } }).populate('tweetUser');
+      }).then(userTweets => {
         reply.view('dashboard', {
-          title: foundUser.firstName + ' ' + foundUser.lastName + ' | TimeLine',
-          tweets: tweetsFound,
-          user: foundUser,
+          title: user.firstName + ' ' + user.lastName + ' | TimeLine',
+          tweets: sortHelper.sortDateTimeNewToOld(userTweets),
+          user: user,
           isCurrentUser: false,
+          followers: followers,
+          following: followings,
         });
       }).catch(err => {
         console.log('Tried to view all tweets with user id : ' + userId + ' but something went wrong :(');

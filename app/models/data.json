@@ -52,5 +52,20 @@
       "tweetDate": "2017-09-16 20:54:00.000Z",
       "tweetUser": "->users.marge"
     }
+  },
+  "follows": {
+    "_model": "Follow",
+    "one": {
+      "follower": "->users.homer",
+      "following": "->users.marge"
+    },
+    "two": {
+      "follower": "->users.homer",
+      "following": "->users.bart"
+    },
+    "three": {
+      "follower": "->users.marge",
+      "following": "->users.homer"
+    }
   }
 }

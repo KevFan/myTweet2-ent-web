@@ -17,7 +17,7 @@
                 <i class=" blue user icon"></i> {{tweetUser.firstName}} {{tweetUser.lastName}}
               </a>
             </div>
-            {{#if ../isCurrentUser}}
+            {{#if (isMyTweet ../user.id tweetUser.id)}}
               <div class="right floated">
                 <a href="/deleteSpecificTweet/{{../user.id}}/{{_id}}">
                   <i class="red delete icon"></i>
