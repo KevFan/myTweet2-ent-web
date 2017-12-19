@@ -79,6 +79,24 @@ class TweetService {
   deleteOneAdmin(id) {
     return this.httpService.delete('/api/admins/' + id);
   }
+
+  // Follows
+  getFollowers(id) {
+    return this.httpService.get('/api/follow/followers/' + id);
+  }
+
+  getFollowings(id) {
+    return this.httpService.get('/api/follow/following/' + id);
+  }
+
+  follow(newFollow) {
+    return this.httpService.post('/api/follow', newFollow);
+
+  }
+
+  unfollow(userid, id) {
+    return this.httpService.delete('/api/follow/' + userid + '/' + id);
+  }
 }
 
 module.exports = TweetService;
