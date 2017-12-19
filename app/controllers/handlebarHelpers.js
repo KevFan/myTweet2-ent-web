@@ -10,3 +10,7 @@ const moment = require('moment');
 Handlebars.registerHelper('formatDate', (dateString) => {
   return moment(new Date(dateString)).format('lll');
 });
+
+Handlebars.registerHelper('isMyTweet', (userId, compareId) => {
+  return userId === compareId;
+});
