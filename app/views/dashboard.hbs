@@ -15,7 +15,9 @@
       <p>Followers</p>
       <ul>
         {{#each followers}}
-          <li>{{follower.firstName}} {{follower.lastName}}</li>
+          <a href="/view/{{follower._id}}">
+            <li>{{follower.firstName}} {{follower.lastName}}</li>
+          </a>
         {{/each}}
       </ul>
     </div>
@@ -23,7 +25,9 @@
       <p>Following</p>
       <ul>
         {{#each following}}
-          <li>{{following.firstName}} {{following.lastName}}</li>
+          <a href="/view/{{following._id}}">
+            <li>{{following.firstName}} {{following.lastName}}</li>
+          </a>
         {{/each}}
       </ul>
     </div>
