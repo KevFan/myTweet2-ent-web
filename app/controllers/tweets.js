@@ -10,25 +10,34 @@ const sortHelper = require('../utils/sort');
 exports.home = {
   handler: function (request, reply) {
     const userId = request.auth.credentials.loggedInUser;
-    let userTweets = null;
+    let followers = null;
     let user = null;
     let followings = null;
-    Tweet.find({ tweetUser: userId }).populate('tweetUser').then(allUserTweets => {
-      userTweets = sortHelper.sortDateTimeNewToOld(allUserTweets);
-      return User.findOne({ _id: userId });
-    }).then(foundUser => {
+
+    User.findOne({ _id: userId }).then(foundUser => {
       user = foundUser;
       return Follow.find({ follower: userId }).populate('following');
     }).then(foundFollowings => {
       followings = foundFollowings;
       return Follow.find({ following: userId }).populate('follower');
     }).then(foundFollowers => {
+      followers = foundFollowers;
+
+      // Array of userIds for to find/merge following tweets
+      let userIds = [];
+      userIds.push(userId);
+      for (let following of followings) {
+        userIds.push(following.following._id);
+      }
+
+      return Tweet.find({ tweetUser: { $in: userIds } }).populate('tweetUser');
+    }).then(foundTweets => {
       reply.view('dashboard', {
         title: 'Tweet | Dashboard',
-        tweets: userTweets,
+        tweets: sortHelper.sortDateTimeNewToOld(foundTweets),
         user: user,
         isCurrentUser: true,
-        followers: foundFollowers,
+        followers: followers,
         following: followings,
       });
     }).catch(err => {
@@ -128,26 +137,34 @@ exports.viewUserTimeline = {
     if (userId === request.auth.credentials.loggedInUser) {
       reply.redirect('/home');
     } else {
-      let tweetsFound = null;
+      // let tweetsFound = null;
       let user = null;
       let followings = null;
-      Tweet.find({ tweetUser: userId }).populate('tweetUser').then(userTweets => {
-        console.log('Successfully found all tweets with user id: ' + userId);
-        tweetsFound = sortHelper.sortDateTimeNewToOld(userTweets);
-        return User.findOne({ _id: userId });
-      }).then(foundUser => {
+      let followers = null;
+      User.findOne({ _id: userId }).then(foundUser => {
         user = foundUser;
         return Follow.find({ follower: userId }).populate('following');
       }).then(foundFollowings => {
         followings = foundFollowings;
         return Follow.find({ following: userId }).populate('follower');
       }).then(foundFollowers => {
+        followers = foundFollowers;
+
+        // Array of userIds for to find/merge following tweets
+        let userIds = [];
+        userIds.push(userId);
+        for (let following of followings) {
+          userIds.push(following.following._id);
+        }
+
+        return Tweet.find({ tweetUser: { $in: userIds } }).populate('tweetUser');
+      }).then(userTweets => {
         reply.view('dashboard', {
           title: user.firstName + ' ' + user.lastName + ' | TimeLine',
-          tweets: tweetsFound,
+          tweets: sortHelper.sortDateTimeNewToOld(userTweets),
           user: user,
           isCurrentUser: false,
-          followers: foundFollowers,
+          followers: followers,
           following: followings,
         });
       }).catch(err => {
