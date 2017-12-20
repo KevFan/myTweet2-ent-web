@@ -4,6 +4,7 @@ const Tweet = require('../models/tweet');
 const Follow = require('../models/follow');
 const sortHelper = require('../utils/sort');
 const cloudinary = require('cloudinary');
+const deleteFromCloud = require('../utils/pictureHelpers');
 
 try {
   const env = require('../../.data/.env.json');
@@ -117,7 +118,10 @@ exports.deleteSpecificTweet = {
   handler: function (request, reply) {
     const tweetId = request.params.id;
     const userId = request.params.userid;
-    Tweet.findOneAndRemove({ _id: tweetId }).then(success => {
+    Tweet.findOne({ _id: tweetId }).then(foundTweet => {
+      deleteFromCloud(foundTweet.tweetImage);
+      return Tweet.findOneAndRemove({ _id: tweetId });
+    }).then(success => {
       console.log('Successfully deleted tweet: ' + request.params.id);
       if (userId === request.auth.credentials.loggedInUser) {
         reply.redirect('/home');
@@ -137,7 +141,13 @@ exports.deleteSpecificTweet = {
 exports.deleteAllUserTweets = {
   handler: function (request, reply) {
     const userId = request.params.userid;
-    Tweet.remove({ tweetUser: userId }).then(success => {
+    Tweet.find({ tweetUser: userId }).then(foundTweets => {
+      for (let tweet of foundTweets) {
+        deleteFromCloud(tweet.tweetImage);
+      }
+
+      return Tweet.remove({ tweetUser: userId });
+    }).then(success => {
       console.log('Successfully deleted all tweets with user id: ' + userId);
       if (userId === request.auth.credentials.loggedInUser) {
         reply.redirect('/home');

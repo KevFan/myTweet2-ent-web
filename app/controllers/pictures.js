@@ -1,6 +1,6 @@
 const cloudinary = require('cloudinary');
 const User = require('../models/user');
-const path = require('path');
+const deleteFromCloud = require('../utils/pictureHelpers');
 
 try {
   const env = require('../../.data/.env.json');
@@ -24,7 +24,7 @@ exports.updateProfilePicture = {
     const stream = cloudinary.v2.uploader.upload_stream({ upload_preset: "cth4nyko-profile" }, function (error, uploadResult) {
       console.log(uploadResult);
       User.findOne({ _id: request.auth.credentials.loggedInUser }).then(foundUser => {
-        deleteFromCloud(foundUser);
+        deleteFromCloud(foundUser.image);
         foundUser.image = uploadResult.url;
         return foundUser.save();
       }).then(savedUser => {
@@ -47,7 +47,7 @@ exports.deleteProfilePicture = {
   handler: function (request, reply) {
 
     User.findOne({ _id: request.auth.credentials.loggedInUser }).then(foundUser => {
-      deleteFromCloud(foundUser);
+      deleteFromCloud(foundUser.image);
       foundUser.image = '';
       return foundUser.save();
     }).then(savedUser => {
@@ -59,15 +59,4 @@ exports.deleteProfilePicture = {
 
   },
 };
-/**
- * Helper to delete the user profile picture from the cloudinary store
- * @param loggedInUser User with the profile image to delete
- */
-function deleteFromCloud(loggedInUser) {
-  if (loggedInUser.image) {
-    const id = path.parse(loggedInUser.image);
-    cloudinary.api.delete_resources([id.name], function (result) {
-      console.log(result);
-    });
-  }
-}
+
