@@ -33,6 +33,7 @@ module.exports = [
   { method: 'GET', path: '/follow/{id}', config: Follow.unfollow },
 
   { method: 'POST', path: '/updateProfilePicture', config: Picture.updateProfilePicture },
+  { method: 'GET', path: '/deleteProfilePicture', config: Picture.deleteProfilePicture },
 
   {
     method: 'GET',
