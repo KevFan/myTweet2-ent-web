@@ -21,7 +21,7 @@ exports.updateProfilePicture = {
   },
 
   handler: function (request, reply) {
-    const stream = cloudinary.v2.uploader.upload_stream(function (error, uploadResult) {
+    const stream = cloudinary.v2.uploader.upload_stream({ upload_preset: "cth4nyko-profile" }, function (error, uploadResult) {
       console.log(uploadResult);
       User.findOne({ _id: request.auth.credentials.loggedInUser }).then(foundUser => {
         deleteFromCloud(foundUser);
