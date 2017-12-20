@@ -7,7 +7,8 @@
             <div class="meta">
               <i class="calendar icon"></i> <span class="category">{{formatDate tweetDate}}</span>
             </div>
-            <div class="description">
+            <div class="ui center aligned middle aligned description">
+              {{#if tweetImage}}<img class="ui medium image" src="{{tweetImage}}">{{/if}}
               <p>{{tweetText}}</p>
             </div>
           </div>
