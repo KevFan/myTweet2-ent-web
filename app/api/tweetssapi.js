@@ -2,6 +2,8 @@
 
 const Tweet = require('../models/tweet');
 const Boom = require('boom');
+const cloudinary = require('cloudinary');
+const deleteFromCloud = require('../utils/pictureHelpers');
 
 /**
  * Find all tweets
@@ -57,14 +59,28 @@ exports.findAllUser = {
  */
 exports.create = {
   auth: false,
+  payload: {
+    maxBytes: 209715200,
+    output: 'stream',
+    parse: true,
+  },
 
   handler: function (request, reply) {
-    const tweet = new Tweet(request.payload);
-    tweet.save().then(newTweet => {
-      reply(newTweet).code(201);
-    }).catch(err => {
-      reply(Boom.badImplementation('error creating tweet'));
+    let tweetData = request.payload;
+    const stream = cloudinary.v2.uploader.upload_stream(function (error, uploadResult) {
+      console.log(uploadResult);
+      if (uploadResult) {
+        tweetData.tweetImage = uploadResult.url;
+      }
+
+      Tweet.create(tweetData).then(newTweet => {
+        reply(newTweet).code(201);
+      }).catch(err => {
+        reply(Boom.badImplementation('error creating tweet'));
+      });
     });
+
+    tweetData.picture.pipe(stream);
   },
 };
 
@@ -75,7 +91,13 @@ exports.deleteAll = {
   auth: false,
 
   handler: function (request, reply) {
-    Tweet.remove({}).then(err => {
+    Tweet.find({}).then(foundTweets => {
+      for (let tweet of foundTweets) {
+        deleteFromCloud(tweet.tweetImage);
+      }
+
+      return Tweet.remove({});
+    }).then(err => {
       reply().code(204);
     }).catch(err => {
       reply(Boom.badImplementation('error removing tweets'));
@@ -90,7 +112,10 @@ exports.deleteOne = {
   auth: false,
 
   handler: function (request, reply) {
-    Tweet.remove({ _id: request.params.id }).then(tweet => {
+    Tweet.findOne({ _id: request.params.id }).then(foundTweet => {
+      deleteFromCloud(foundTweet.tweetImage);
+      return Tweet.remove({ _id: request.params.id });
+    }).then(tweet => {
       reply(tweet).code(204);
     }).catch(err => {
       reply(Boom.notFound('id not found'));
@@ -105,7 +130,13 @@ exports.deleteAllUser = {
   auth: false,
 
   handler: function (request, reply) {
-    Tweet.remove({ tweetUser: request.params.userid }).then(err => {
+    Tweet.find({ tweetUser: request.params.userid }).then(foundTweets => {
+      for (let tweet of foundTweets) {
+        deleteFromCloud(tweet.tweetImage);
+      }
+
+      return Tweet.remove({ tweetUser: request.params.userid });
+    }).then(err => {
       reply().code(204);
     }).catch(err => {
       reply(Boom.badImplementation('error removing tweets'));
