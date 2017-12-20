@@ -3,6 +3,7 @@ const Assets = require('./app/controllers/assets');
 const Tweets = require('./app/controllers/tweets');
 const Admin = require('./app/controllers/master');
 const Follow = require('./app/controllers/follow');
+const Picture = require('./app/controllers/pictures');
 const handleBarHelpers = require('./app/controllers/handlebarHelpers');
 
 module.exports = [
@@ -30,6 +31,8 @@ module.exports = [
 
   { method: 'POST', path: '/follow', config: Follow.follow },
   { method: 'GET', path: '/follow/{id}', config: Follow.unfollow },
+
+  { method: 'POST', path: '/updateProfilePicture', config: Picture.updateProfilePicture },
 
   {
     method: 'GET',
