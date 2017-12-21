@@ -11,12 +11,23 @@ const deleteFromCloud = require('../utils/pictureHelpers');
 exports.home = {
   handler: function (request, reply) {
     let admin = null;
+    let users = null;
+    let tweets = null;
     Admin.findOne({ _id: request.auth.credentials.loggedInUser }).then(foundAdmin => {
       admin = foundAdmin;
       return User.find({});
     }).then(allUsers => {
+      users = allUsers;
+      return Tweet.find({});
+    }).then(foundTweets => {
+      tweets = foundTweets;
+      return Follow.find({});
+    }).then(foundFollows => {
       if (admin) {
-        reply.view('adminDashboard', { title: 'Admin Dashboard', user: allUsers });
+        reply.view('adminDashboard', {
+          title: 'Admin Dashboard', user: users, numUsers: users.length, numTweets: tweets.length,
+          numFollows: foundFollows.length,
+        });
       } else {
         console.log('Not an admin');
         reply.redirect('/');
