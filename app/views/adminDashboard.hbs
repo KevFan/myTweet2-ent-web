@@ -1,5 +1,32 @@
 {{> menuAdmin _id='dashboard'}}
 
+<section class="ui centered aligned statistics grid">
+  <section class="four wide column statistic">
+    <div class="value">
+      {{numUsers}}
+    </div>
+    <div class="label">
+      Users
+    </div>
+  </section>
+  <section class="four wide column statistic">
+    <div class="value">
+      {{numTweets}}
+    </div>
+    <div class="label">
+      Tweets
+    </div>
+  </section>
+  <section class="four wide column statistic">
+    <div class="value">
+      {{numFollows}}
+    </div>
+    <div class="label">
+      Followers/Followings
+    </div>
+  </section>
+</section>
+
 <section class="ui center aligned basic segment">
   <button class="circular ui icon blue button item" data-modal="addUser">
     <i class="plus icon"></i>
