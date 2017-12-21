@@ -2,6 +2,8 @@
 
 const Admin = require('../models/admin');
 const Boom = require('boom');
+const bcrypt = require('bcrypt');
+const saltRounds = 10;
 
 /**
  * Find all admins
@@ -45,10 +47,14 @@ exports.create = {
 
   handler: function (request, reply) {
     const admin = new Admin(request.payload);
-    admin.save().then(newAdmin => {
-      reply(newAdmin).code(201);
-    }).catch(err => {
-      reply(Boom.badImplementation('error creating admin'));
+    const plaintextPassword = admin.password;
+    bcrypt.hash(plaintextPassword, saltRounds, (err, hash) => {
+      admin.password = hash;
+      admin.save().then(newAdmin => {
+        reply(newAdmin).code(201);
+      }).catch(err => {
+        reply(Boom.badImplementation('error creating admin'));
+      });
     });
   },
 };
@@ -90,10 +96,14 @@ exports.update = {
   auth: false,
 
   handler: function (request, reply) {
-    Admin.findOneAndUpdate({ _id: request.params.id }, request.payload, { new: true }).then(admin => {
-      reply(admin).code(200);
-    }).catch(err => {
-      reply(Boom.notFound('error updating admin'));
+    let updateData = request.payload;
+    bcrypt.hash(updateData.password, saltRounds, (err, hash) => {
+      updateData.password = hash;
+      Admin.findOneAndUpdate({ _id: request.params.id }, updateData, { new: true }).then(admin => {
+        reply(admin).code(200);
+      }).catch(err => {
+        reply(Boom.notFound('error updating admin'));
+      });
     });
   },
 };
