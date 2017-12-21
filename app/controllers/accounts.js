@@ -116,31 +116,39 @@ exports.authenticate = {
 
   auth: false,
   handler: function (request, reply) {
-    const user = request.payload;
-    User.findOne({ email: user.email }).then(foundUser => {
-      // If found user by email and password matches, set cookie and redirect to member dashboard
-      if (foundUser && foundUser.password === user.password) {
-        request.cookieAuth.set({
-          loggedIn: true,
-          loggedInUser: foundUser._id,
+    const userData = request.payload;
+    let user = null;
+    User.findOne({ email: userData.email }).then(foundUser => {
+      user = foundUser;
+      return Admin.findOne({ email: userData.email });
+    }).then(foundAdmin => {
+      if (user) {
+        bcrypt.compare(userData.password, user.password, (err, isValid) => {
+          if (isValid) {
+            request.cookieAuth.set(
+                {
+                  loggedIn: true,
+                  loggedInUser: user._id,
+                });
+            console.log('Successfully logged in, email: ' + user.email + ' password: ' + user.password);
+            reply.redirect('/home');
+          }
         });
-        reply.redirect('/home');
-      } else {
-        // Otherwise, try finding an admin with the email and password, if successful, set cookie
-        // and redirect to admin dashboard. If not, redirect to sign up
-        Admin.findOne({ email: user.email }).then(foundAdmin => {
-          if (foundAdmin && foundAdmin.password === user.password) {
+      } else if (foundAdmin) {
+        bcrypt.compare(userData.password, foundAdmin.password, (err, isValid) => {
+          if (isValid) {
             request.cookieAuth.set({
               loggedIn: true,
               loggedInUser: foundAdmin._id,
             });
             reply.redirect('/admin');
-          } else {
-            reply.view('login', { message: 'Email/Password incorrect', messageType: 'negative' });
           }
         });
+      } else {
+        reply.view('login', { message: 'Email/Password incorrect', messageType: 'negative' });
       }
     }).catch(err => {
+      console.log(err);
       reply.redirect('/');
     });
   },
