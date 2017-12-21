@@ -3,6 +3,8 @@
 const User = require('../models/user');
 const Admin = require('../models/admin');
 const Joi = require('joi');
+const bcrypt = require('bcrypt');
+const saltRounds = 10;
 
 /**
  * Sends the main home view
@@ -70,19 +72,23 @@ exports.register = {
   auth: false,
   handler: function (request, reply) {
     const user = new User(request.payload);
+    const plaintextPassword = user.password;
 
     // A role parameter to correctly redirect if a admin adds a user
     const userRole = request.params.role;
-    user.save().then(newUser => {
-      console.log(newUser);
-      if (userRole === 'user') {
-        reply.redirect('/login');
-      } else if (userRole === 'admin') {
-        reply.redirect('/admin');
-      }
-    }).catch(err => {
-      console.log(err);
-      reply.redirect('/');
+    bcrypt.hash(plaintextPassword, saltRounds, (err, hash) => {
+      user.password = hash;
+      return user.save().then(newUser => {
+        console.log(newUser);
+        if (userRole === 'user') {
+          reply.redirect('/login');
+        } else if (userRole === 'admin') {
+          reply.redirect('/admin');
+        }
+      }).catch(err => {
+        console.log(err);
+        reply.redirect('/');
+      });
     });
   },
 };
