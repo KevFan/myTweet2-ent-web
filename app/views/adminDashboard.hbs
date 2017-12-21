@@ -1,5 +1,16 @@
 {{> menuAdmin _id='dashboard'}}
 
+<section class="ui center aligned basic segment">
+  <button class="circular ui icon blue button item" data-modal="addUser">
+    <i class="plus icon"></i>
+  </button>
+  <a href="/deleteAllUserAndTweets">
+    <button class="circular ui icon red button">
+      <i class="trash icon"></i>
+    </button>
+  </a>
+</section>
+
 <section class="ui centered aligned statistics grid">
   <section class="four wide column statistic">
     <div class="value">
@@ -27,16 +38,7 @@
   </section>
 </section>
 
-<section class="ui center aligned basic segment">
-  <button class="circular ui icon blue button item" data-modal="addUser">
-    <i class="plus icon"></i>
-  </button>
-  <a href="/deleteAllUserAndTweets">
-    <button class="circular ui icon red button">
-      <i class="trash icon"></i>
-    </button>
-  </a>
-</section>
+<div class="ui divider"></div>
 
 {{> listUsers}}
 
