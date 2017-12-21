@@ -4,6 +4,8 @@ const User = require('../models/user');
 const Boom = require('boom');
 const cloudinary = require('cloudinary');
 const deleteFromCloud = require('../utils/pictureHelpers');
+const bcrypt = require('bcrypt');
+const saltRounds = 10;
 
 /**
  * Find all users
@@ -47,10 +49,14 @@ exports.create = {
 
   handler: function (request, reply) {
     const user = new User(request.payload);
-    user.save().then(newUser => {
-      reply(newUser).code(201);
-    }).catch(err => {
-      reply(Boom.badImplementation('error creating user'));
+    const plaintextPassword = user.password;
+    bcrypt.hash(plaintextPassword, saltRounds, (err, hash) => {
+      user.password = hash;
+      user.save().then(newUser => {
+        reply(newUser).code(201);
+      }).catch(err => {
+        reply(Boom.badImplementation('error creating user'));
+      });
     });
   },
 };
@@ -101,10 +107,14 @@ exports.update = {
   auth: false,
 
   handler: function (request, reply) {
-    User.findOneAndUpdate({ _id: request.params.id }, request.payload, { new: true }).then(user => {
-      reply(user).code(200);
-    }).catch(err => {
-      reply(Boom.notFound('error updating user'));
+    let updateData = request.payload;
+    bcrypt.hash(updateData.password, saltRounds, (err, hash) => {
+      updateData.password = hash;
+      User.findOneAndUpdate({ _id: request.params.id }, updateData, { new: true }).then(user => {
+        reply(user).code(200);
+      }).catch(err => {
+        reply(Boom.notFound('error updating user'));
+      });
     });
   },
 };
