@@ -10,6 +10,8 @@ module.exports = [
   { method: 'DELETE', path: '/api/users/{id}', config: UsersApi.deleteOne },
   { method: 'DELETE', path: '/api/users', config: UsersApi.deleteAll },
   { method: 'PUT', path: '/api/users/{id}', config: UsersApi.update },
+  { method: 'PUT', path: '/api/profilePicture/{id}', config: UsersApi.updateProfilePicture },
+  { method: 'DELETE', path: '/api/profilePicture/{id}', config: UsersApi.deleteProfilePicture },
 
   { method: 'GET', path: '/api/tweets', config: TweetsApi.findAll },
   { method: 'GET', path: '/api/tweets/{id}', config: TweetsApi.findOne },
