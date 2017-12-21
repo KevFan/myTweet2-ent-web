@@ -5,7 +5,11 @@
         <div class="ui raised card">
           <a href="/viewUser/{{_id}}" class="center aligned content">
             <div class="description">
-              <img class="ui small image" src="/images/user.png">
+              {{#if image}}
+                <img class="ui small circular image" src="{{image}}">
+              {{else}}
+                <img class="ui small image" src="/images/user.png">
+              {{/if}}
               <p>{{firstName}} {{lastName}}</p>
               {{email}}
             </div>

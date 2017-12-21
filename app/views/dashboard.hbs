@@ -7,29 +7,49 @@
 <section class="ui stackable grid">
   <aside class="ui center aligned four wide column">
     <div class="ui segment">
-      <i class="massive user icon"></i>
+      {{#if user.image}}
+        <img class="ui middle aligned circular medium image" src="{{user.image}}">
+      {{else}}
+        <i class="massive user icon"></i>
+      {{/if}}
       <p>{{user.firstName}} {{user.lastName}}</p>
       <p>{{user.email}}</p>
+      {{#if isCurrentUser}}
+        <form action="/updateProfilePicture" method="post" enctype="multipart/form-data" style="display:inline">
+          <label for="file" class="circular ui icon blue button">
+            <i class="file image outline icon"></i></label>
+          <input type="file" id="file" name="image" style="display:none">
+          <button class="circular ui icon green button">
+            <i class="cloud upload icon"></i>
+          </button>
+        </form>
+        <a class="circular ui icon red button" href="/deleteProfilePicture">
+          <i class="delete icon"></i></a>
+      {{/if}}
     </div>
     <div class="ui segment">
       <p>Followers</p>
-      <ul>
         {{#each followers}}
-          <a href="/view/{{follower._id}}">
-            <li>{{follower.firstName}} {{follower.lastName}}</li>
+          <a href="/view/{{follower._id}}" data-tooltip="{{follower.firstName}} {{follower.lastName}}">
+            {{#if follower.image}}
+              <img class="ui avatar image" src="{{follower.image}}">
+            {{else}}
+              <img class="ui avatar image" src="/images/user.png">
+            {{/if}}
           </a>
         {{/each}}
-      </ul>
     </div>
     <div class="ui segment">
       <p>Following</p>
-      <ul>
-        {{#each following}}
-          <a href="/view/{{following._id}}">
-            <li>{{following.firstName}} {{following.lastName}}</li>
-          </a>
-        {{/each}}
-      </ul>
+      {{#each following}}
+        <a href="/view/{{following._id}}" data-tooltip="{{following.firstName}} {{following.lastName}}">
+          {{#if following.image}}
+            <img class="ui avatar image" src="{{following.image}}">
+          {{else}}
+            <img class="ui avatar image" src="/images/user.png">
+          {{/if}}
+        </a>
+      {{/each}}
     </div>
   </aside>
   <div class="ui twelve wide column">

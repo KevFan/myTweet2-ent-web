@@ -37,7 +37,7 @@ mongoose.connection.on('connected', function () {
       console.log('preloading Test Data');
       console.log(dbData);
     }).catch(err => {
-      console.log(error);
+      console.log(err);
     });
   }
 });

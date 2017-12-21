@@ -2,6 +2,7 @@ const User = require('../models/user');
 const Tweet = require('../models/tweet');
 const Follow = require('../models/follow');
 const sortHelper = require('../utils/sort');
+const deleteFromCloud = require('../utils/pictureHelpers');
 
 /**
  * Finds all the users in the database and renders it in admin dashboard view
@@ -23,11 +24,26 @@ exports.home = {
 exports.deleteUser = {
   handler: function (request, reply) {
     const userId = request.params.id;
-    Tweet.remove({ tweetUser: userId }).then(success => {
+    Tweet.find({ tweetUser: userId }).then(foundTweets => {
+      for (let tweet of foundTweets) {
+        deleteFromCloud(tweet.tweetImage);
+      }
+
+      return Tweet.remove({ tweetUser: userId });
+    }).then(success => {
       console.log('Successfully removed all tweets with user id:' + userId);
+      return User.findOne({ _id: userId });
+    }).then(foundUser => {
+      deleteFromCloud(foundUser.image);
       return User.remove({ _id: userId });
     }).then(removeUserSuccess => {
       console.log('Successfully user with id:' + userId);
+      return Follow.remove({ follower: userId });
+    }).then(removedFollowers => {
+      console.log('Successfully removed ' + userId + ' from follower listing');
+      return Follow.remove({ following: userId });
+    }).then(removedFollowing => {
+      console.log('Successfully removed ' + userId + ' from following listing');
       reply.redirect('/admin');
     }).catch(err => {
       console.log('Something went wrong remove user and associated tweets :(');
@@ -86,11 +102,26 @@ exports.viewUser = {
  */
 exports.deleteAllUserAndTweets = {
   handler: function (request, reply) {
-    Tweet.remove({}).then(success => {
+    Tweet.find({}).then(foundTweets => {
+      for (let tweet of foundTweets) {
+        deleteFromCloud(tweet.tweetImage);
+      }
+
+      return Tweet.remove({});
+    }).then(success => {
       console.log('Successfully removed all tweets');
+      return User.find({});
+    }).then(foundUser => {
+      for (let user of foundUser) {
+        deleteFromCloud(user.image);
+      }
+
       return User.remove({});
     }).then(removeUserSuccess => {
       console.log('Successfully removed all users');
+      return Follow.remove({});
+    }).then(removedFollows => {
+      console.log('Successfully removed all follows');
       reply.redirect('/admin');
     }).catch(err => {
       console.log('Something went wrong removing all user and tweets :(');

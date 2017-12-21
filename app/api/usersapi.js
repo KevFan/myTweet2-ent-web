@@ -2,6 +2,8 @@
 
 const User = require('../models/user');
 const Boom = require('boom');
+const cloudinary = require('cloudinary');
+const deleteFromCloud = require('../utils/pictureHelpers');
 
 /**
  * Find all users
@@ -60,8 +62,14 @@ exports.deleteAll = {
   auth: false,
 
   handler: function (request, reply) {
-    User.remove({}).then(err => {
-      reply().code(204);
+    User.find({}).then(foundUsers => {
+      for (let user of foundUsers) {
+        deleteFromCloud(user.image);
+      }
+
+      return User.remove({});
+    }).then(success => {
+      reply(success).code(204);
     }).catch(err => {
       reply(Boom.badImplementation('error removing users'));
     });
@@ -75,8 +83,11 @@ exports.deleteOne = {
   auth: false,
 
   handler: function (request, reply) {
-    User.remove({ _id: request.params.id }).then(user => {
-      reply(user).code(204);
+    User.findOne({ _id: request.params.id }).then(foundUser => {
+      deleteFromCloud(foundUser.image);
+      return User.remove({ _id: request.params.id });
+    }).then(success => {
+      reply(success).code(204);
     }).catch(err => {
       reply(Boom.notFound('id not found'));
     });
@@ -95,5 +106,56 @@ exports.update = {
     }).catch(err => {
       reply(Boom.notFound('error updating user'));
     });
+  },
+};
+
+/**
+ * Update a user profile picture by id
+ */
+exports.updateProfilePicture = {
+  auth: false,
+
+  payload: {
+    maxBytes: 209715200,
+    output: 'stream',
+    parse: true,
+  },
+
+  handler: function (request, reply) {
+    const stream = cloudinary.v2.uploader.upload_stream({ upload_preset: "cth4nyko-profile" }, function (error, uploadResult) {
+      console.log(uploadResult);
+      User.findOne({ _id: request.params.id }).then(foundUser => {
+        deleteFromCloud(foundUser.image);
+        foundUser.image = uploadResult.url;
+        return foundUser.save();
+      }).then(savedUser => {
+        reply(savedUser).code(200);
+      }).catch(err => {
+        reply(Boom.notFound('error updating user profile picture'));
+      });
+    });
+
+    request.payload.image.pipe(stream);
+  },
+};
+
+/**
+ * Delete profile picture
+ */
+exports.deleteProfilePicture = {
+  auth: false,
+
+  handler: function (request, reply) {
+
+    User.findOne({ _id: request.params.id }).then(foundUser => {
+      deleteFromCloud(foundUser.image);
+      foundUser.image = '';
+      return foundUser.save();
+    }).then(savedUser => {
+      reply(savedUser).code(200);
+    }).catch(err => {
+      reply(Boom.notFound('error deleting profile picture'));
+    });
+
   },
 };

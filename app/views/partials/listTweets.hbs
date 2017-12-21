@@ -7,14 +7,19 @@
             <div class="meta">
               <i class="calendar icon"></i> <span class="category">{{formatDate tweetDate}}</span>
             </div>
-            <div class="description">
+            <div class="ui center aligned middle aligned description">
+              {{#if tweetImage}}<img class="ui medium image" src="{{tweetImage}}">{{/if}}
               <p>{{tweetText}}</p>
             </div>
           </div>
           <div class="extra content">
             <div class="left floated author">
               <a href="/view/{{tweetUser._id}}">
-                <i class=" blue user icon"></i> {{tweetUser.firstName}} {{tweetUser.lastName}}
+                {{#if tweetUser.image}}
+                  <img class="ui avatar image" src="{{tweetUser.image}}"> {{tweetUser.firstName}} {{tweetUser.lastName}}
+                {{else}}
+                  <img class="ui avatar image" src="/images/user.png"> {{tweetUser.firstName}} {{tweetUser.lastName}}
+                {{/if}}
               </a>
             </div>
             {{#if (isMyTweet ../user.id tweetUser.id)}}

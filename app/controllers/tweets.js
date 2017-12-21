@@ -3,6 +3,16 @@ const User = require('../models/user');
 const Tweet = require('../models/tweet');
 const Follow = require('../models/follow');
 const sortHelper = require('../utils/sort');
+const cloudinary = require('cloudinary');
+const deleteFromCloud = require('../utils/pictureHelpers');
+
+try {
+  const env = require('../../.data/.env.json');
+  cloudinary.config(env.cloudinary);
+}
+catch (e) {
+  console.log('Cloudinary credentials file not found, profile picture options disabled - see README.md');
+}
 
 /**
  * User home, finds the user details and all associated tweets
@@ -52,23 +62,37 @@ exports.home = {
  * Add a tweet associated with a userId that is passed in as a parameter
  */
 exports.addTweet = {
+  payload: {
+    maxBytes: 209715200,
+    output: 'stream',
+    parse: true,
+  },
+
   handler: function (request, reply) {
     const userId = request.params.userid;
     let tweetData = request.payload;
     tweetData.tweetUser = userId;
-    console.log(tweetData);
-    Tweet.create(tweetData).then(newTweet => {
-      // If the user id, is the same as the loggedInUserId, redirect to user dashboard
-      if (userId === request.auth.credentials.loggedInUser) {
-        reply.redirect('/home');
-      } // Else redirect to admin view of user dashboard
-      else {
-        reply.redirect('/viewUser/' + userId);
+    const stream = cloudinary.v2.uploader.upload_stream(function (error, uploadResult) {
+      console.log(uploadResult);
+      if (uploadResult) {
+        tweetData.tweetImage = uploadResult.url;
       }
-    }).catch(err => {
-      console.log('Tried to add tweet but Something went wrong :(');
-      reply.redirect('/home');
+
+      Tweet.create(tweetData).then(newTweet => {
+        // If the user id, is the same as the loggedInUserId, redirect to user dashboard
+        if (userId === request.auth.credentials.loggedInUser) {
+          reply.redirect('/home');
+        } // Else redirect to admin view of user dashboard
+        else {
+          reply.redirect('/viewUser/' + userId);
+        }
+      }).catch(err => {
+        console.log('Tried to add tweet but Something went wrong :(');
+        reply.redirect('/home');
+      });
     });
+
+    tweetData.picture.pipe(stream);
   },
 };
 
@@ -94,7 +118,10 @@ exports.deleteSpecificTweet = {
   handler: function (request, reply) {
     const tweetId = request.params.id;
     const userId = request.params.userid;
-    Tweet.findOneAndRemove({ _id: tweetId }).then(success => {
+    Tweet.findOne({ _id: tweetId }).then(foundTweet => {
+      deleteFromCloud(foundTweet.tweetImage);
+      return Tweet.findOneAndRemove({ _id: tweetId });
+    }).then(success => {
       console.log('Successfully deleted tweet: ' + request.params.id);
       if (userId === request.auth.credentials.loggedInUser) {
         reply.redirect('/home');
@@ -114,7 +141,13 @@ exports.deleteSpecificTweet = {
 exports.deleteAllUserTweets = {
   handler: function (request, reply) {
     const userId = request.params.userid;
-    Tweet.remove({ tweetUser: userId }).then(success => {
+    Tweet.find({ tweetUser: userId }).then(foundTweets => {
+      for (let tweet of foundTweets) {
+        deleteFromCloud(tweet.tweetImage);
+      }
+
+      return Tweet.remove({ tweetUser: userId });
+    }).then(success => {
       console.log('Successfully deleted all tweets with user id: ' + userId);
       if (userId === request.auth.credentials.loggedInUser) {
         reply.redirect('/home');
