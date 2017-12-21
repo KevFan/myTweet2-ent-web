@@ -42,14 +42,19 @@ exports.home = {
 
       return Tweet.find({ tweetUser: { $in: userIds } }).populate('tweetUser');
     }).then(foundTweets => {
-      reply.view('dashboard', {
-        title: 'Tweet | Dashboard',
-        tweets: sortHelper.sortDateTimeNewToOld(foundTweets),
-        user: user,
-        isCurrentUser: true,
-        followers: followers,
-        following: followings,
-      });
+      if (user) {
+        reply.view('dashboard', {
+          title: 'Tweet | Dashboard',
+          tweets: sortHelper.sortDateTimeNewToOld(foundTweets),
+          user: user,
+          isCurrentUser: true,
+          followers: followers,
+          following: followings,
+        });
+      } else {
+        console.log('not a user');
+        reply.redirect('/');
+      }
     }).catch(err => {
       console.log(err);
       reply.redirect('/');
@@ -101,8 +106,16 @@ exports.addTweet = {
  */
 exports.globalTimeline = {
   handler: function (request, reply) {
-    Tweet.find({}).populate('tweetUser').then(allTweets => {
-      reply.view('globalTimeline', { tweets: sortHelper.sortDateTimeNewToOld(allTweets) });
+    let user = null;
+    User.findOne({ _id: request.auth.credentials.loggedInUser }).then(foundUser => {
+      user = foundUser;
+      return Tweet.find({}).populate('tweetUser');
+    }).then(allTweets => {
+      if (user) {
+        reply.view('globalTimeline', { tweets: sortHelper.sortDateTimeNewToOld(allTweets) });
+      } else {
+        reply.view('globalTimeline', { tweets: sortHelper.sortDateTimeNewToOld(allTweets), isAdmin: true });
+      }
     }).catch(err => {
       console.log('Tried to get all tweets but Something went wrong :(');
       reply.redirect('/home');

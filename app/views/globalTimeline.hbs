@@ -1,3 +1,7 @@
-{{> menuUser _id="global"}}
+{{#if isAdmin}}
+  {{> menuAdmin _id='global'}}
+{{else}}
+  {{> menuUser _id="global"}}
+{{/if}}
 
 {{> listTweets}}
