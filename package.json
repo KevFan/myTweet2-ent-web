@@ -19,6 +19,7 @@
   "homepage": "https://github.com/KevFan/myTweet-enterprise-web#readme",
   "dependencies": {
     "boom": "^6.0.0",
+    "cloudinary": "^1.9.1",
     "handlebars": "^4.0.10",
     "hapi": "^16.6.2",
     "hapi-auth-cookie": "^7.0.0",
