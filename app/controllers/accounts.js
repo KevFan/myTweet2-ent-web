@@ -123,27 +123,9 @@ exports.authenticate = {
       return Admin.findOne({ email: userData.email });
     }).then(foundAdmin => {
       if (user) {
-        bcrypt.compare(userData.password, user.password, (err, isValid) => {
-          if (isValid) {
-            request.cookieAuth.set(
-                {
-                  loggedIn: true,
-                  loggedInUser: user._id,
-                });
-            console.log('Successfully logged in, email: ' + user.email + ' password: ' + user.password);
-            reply.redirect('/home');
-          }
-        });
+        compareAndRedirect(userData.password, user, request, reply);
       } else if (foundAdmin) {
-        bcrypt.compare(userData.password, foundAdmin.password, (err, isValid) => {
-          if (isValid) {
-            request.cookieAuth.set({
-              loggedIn: true,
-              loggedInUser: foundAdmin._id,
-            });
-            reply.redirect('/admin');
-          }
-        });
+        compareAndRedirect(userData.password, foundAdmin, request, reply);
       } else {
         reply.view('login', { message: 'Email/Password incorrect', messageType: 'negative' });
       }
@@ -255,30 +237,62 @@ exports.updateSettings = {
     const role = request.params.role;
     const editedUser = request.payload;
 
-    // Try finding user by userId and update
-    User.findOneAndUpdate({ _id: userId }, editedUser, { new: true }).then(updateUser => {
-      // If got updated user
-      if (updateUser) {
-        // determine if user is updating itself or admin updating user to send specific view
-        if (role === 'user') {
-          reply.view('settings', { title: 'Edit Account Settings', user: updateUser, role: 'user' });
-        } else if (role === 'admin') {
-          reply.redirect('/admin');
-        }
-      } else {
-        // Otherwise try finding admin and update
-        Admin.findOneAndUpdate({ _id: userId }, editedUser, { new: true }).then(updateAdmin => {
-          reply.view('settings', {
-            title: 'Edit Account Settings',
-            user: updateAdmin,
-            isAdmin: true,
-            role: 'admin',
+    bcrypt.hash(editedUser.password, saltRounds, function (err, hash) {
+      editedUser.password = hash;
+
+      // Try finding user by userId and update
+      User.findOneAndUpdate({ _id: userId }, editedUser, { new: true }).then(updateUser => {
+        // If got updated user
+        if (updateUser) {
+          // determine if user is updating itself or admin updating user to send specific view
+          if (role === 'user') {
+            reply.view('settings', { title: 'Edit Account Settings', user: updateUser, role: 'user' });
+          } else if (role === 'admin') {
+            reply.redirect('/admin');
+          }
+        } else {
+          // Otherwise try finding admin and update
+          Admin.findOneAndUpdate({ _id: userId }, editedUser, { new: true }).then(updateAdmin => {
+            reply.view('settings', {
+              title: 'Edit Account Settings',
+              user: updateAdmin,
+              isAdmin: true,
+              role: 'admin',
+            });
           });
-        });
-      }
-    }).catch(err => {
-      console.log('no user or admin with id: ' + userId);
-      reply.redirect('/');
+        }
+      }).catch(err => {
+        console.log('no user or admin with id: ' + userId);
+        reply.redirect('/');
+      });
     });
   },
 };
+
+/**
+ * Helper to perform compare of password attempt to user salt/hash and redirect to correct dashboard
+ * if is user/admin and set session cookie
+ * @param passwordAttempt plain text of password attempt
+ * @param user user containing hash/salt password to compare
+ * @param request
+ * @param reply
+ */
+function compareAndRedirect(passwordAttempt, user, request, reply) {
+  bcrypt.compare(passwordAttempt, user.password, (err, isValid) => {
+    if (isValid) {
+      request.cookieAuth.set(
+          {
+            loggedIn: true,
+            loggedInUser: user._id,
+          });
+      console.log('Successfully logged in, email: ' + user.email + ' password: ' + user.password);
+      if (user instanceof User) {
+        reply.redirect('/home');
+      } else if (user instanceof Admin) {
+        reply.redirect('/admin');
+      }
+    } else {
+      reply.view('login', { message: 'Email/Password incorrect', messageType: 'negative' });
+    }
+  });
+}
