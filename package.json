@@ -18,6 +18,7 @@
   },
   "homepage": "https://github.com/KevFan/myTweet-enterprise-web#readme",
   "dependencies": {
+    "bcrypt": "^1.0.3",
     "boom": "^6.0.0",
     "cloudinary": "^1.9.1",
     "handlebars": "^4.0.10",

@@ -5,21 +5,21 @@
       "firstName": "Homer",
       "lastName": "Simpson",
       "email": "homer@simpson.com",
-      "password": "secret",
+      "password": "$2a$10$.WqVQm8dt00DspaQQRqWDOPxDYSM9.36VJsDgQcGe2oLlanKGufxO",
       "image": ""
     },
     "marge": {
       "firstName": "Marge",
       "lastName": "Simpson",
       "email": "marge@simpson.com",
-      "password": "secret",
+      "password": "$2a$10$59XtJN2mQnqHjHC/MliV/e5LgxvhbFK9Fz6yt7t613pGl2K8AmpOu",
       "image": ""
     },
     "bart": {
       "firstName": "Bart",
       "lastName": "Simpson",
       "email": "bart@simpson.com",
-      "password": "secret",
+      "password": "$2a$10$.k85UAeTFECoE0NkEO7ta.3NlU2zltXg4FAnP4CWdd9P.g8eWsnTm",
       "image": ""
     }
   },
@@ -29,13 +29,13 @@
       "firstName": "Admin",
       "lastName": "Simpson",
       "email": "admin@simpson.com",
-      "password": "secret"
+      "password": "$2a$10$qolC7CTH4QFMOTmkgzyS8ezZGyBTrP3Snv2Vt1bqe2MakfhFMBA2G"
     },
     "two": {
       "firstName": "Grandpa",
       "lastName": "Simpson",
       "email": "grandpa@simpson.com",
-      "password": "secret"
+      "password": "$2a$10$k0DO0aDbEELTv7btUBRgQu7vt/6T5.JIAzk6G4XAdpu4EgRDbejWO"
     }
   },
   "tweets": {
