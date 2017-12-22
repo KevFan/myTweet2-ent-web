@@ -35,6 +35,16 @@ class SyncHttpService {
     return returnedObj;
   }
 
+  put(url, obj) {
+    let returnedObj = null;
+    const res = request('PUT', this.baseUrl + url, { json: obj, headers: this.authHeadder });
+    if (res.statusCode < 300) {
+      returnedObj = JSON.parse(res.getBody('utf8'));
+    }
+
+    return returnedObj;
+  }
+
   post(url, obj) {
     let returnedObj = null;
     const res = request('POST', this.baseUrl + url, { json: obj, headers: this.authHeadder });
