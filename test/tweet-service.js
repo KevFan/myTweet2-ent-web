@@ -98,8 +98,12 @@ class TweetService {
     return this.httpService.delete('/api/follow/' + userid + '/' + id);
   }
 
-  authenticate(user) {
-    return this.httpService.post('/api/users/authenticate', user);
+  login(user) {
+    return this.httpService.setAuth('/api/users/authenticate', user);
+  }
+
+  logout() {
+    this.httpService.clearAuth();
   }
 }
 
