@@ -97,6 +97,10 @@ class TweetService {
   unfollow(userid, id) {
     return this.httpService.delete('/api/follow/' + userid + '/' + id);
   }
+
+  authenticate(user) {
+    return this.httpService.post('/api/users/authenticate', user);
+  }
 }
 
 module.exports = TweetService;
