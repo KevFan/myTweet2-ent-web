@@ -1,5 +1,6 @@
 const jwt = require('jsonwebtoken');
 const User = require('../models/user');
+const Admin = require('../models/admin');
 
 exports.createToken = function (user) {
   return jwt.sign({ id: user._id, email: user.email }, 'secretpasswordnotrevealedtoanyone', {
@@ -21,8 +22,14 @@ exports.decodeToken = function (token) {
 };
 
 exports.validate = function (decoded, request, callback) {
-  User.findOne({ _id: decoded.id }).then(user => {
+  let user = null;
+  User.findOne({ _id: decoded.id }).then(foundUser => {
+    user = foundUser;
+    return Admin.findOne({ _id: decoded.id });
+  }).then(foundAdmin => {
     if (user != null) {
+      callback(null, true);
+    } else if (foundAdmin != null) {
       callback(null, true);
     } else {
       callback(null, false);

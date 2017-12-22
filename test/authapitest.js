@@ -8,6 +8,7 @@ const utils = require('../app/api/utils.js');
 suite('Authenticate API tests', function () {
 
   let users = fixtures.users;
+  let admins = fixtures.admins;
 
   const tweetService = new TweetService('http://localhost:4000');
 
@@ -22,5 +23,14 @@ suite('Authenticate API tests', function () {
     tweetService.logout();
     returnedTweets = tweetService.getTweets();
     assert.isNull(returnedTweets);
+
+    let returnedUsers = tweetService.getUsers();
+    assert.isNull(returnedUsers);
+    tweetService.login(admins[0]);
+    returnedUsers = tweetService.getUsers();
+    assert.isNotNull(returnedUsers);
+    tweetService.logout();
+    returnedUsers = tweetService.getUsers();
+    assert.isNull(returnedUsers);
   });
 });

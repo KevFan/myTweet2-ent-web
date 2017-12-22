@@ -6,8 +6,6 @@ const cloudinary = require('cloudinary');
 const deleteFromCloud = require('../utils/pictureHelpers');
 const bcrypt = require('bcrypt');
 const saltRounds = 10;
-const utils = require('./utils.js');
-
 
 /**
  * Find all users
@@ -186,21 +184,3 @@ exports.deleteProfilePicture = {
   },
 };
 
-exports.authenticate = {
-  auth: false,
-  handler: function (request, reply) {
-    const user = request.payload;
-    User.findOne({ email: user.email }).then(foundUser => {
-      bcrypt.compare(user.password, foundUser.password, (err, isValid) => {
-        if (isValid && foundUser) {
-          const token = utils.createToken(foundUser);
-          reply({ success: true, token: token }).code(201);
-        } else {
-          reply({ success: false, message: 'Authentication failed. User not found.' }).code(201);
-        }
-      });
-    }).catch(err => {
-      reply(Boom.notFound('internal db failure'));
-    });
-  },
-};
