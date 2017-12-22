@@ -25,7 +25,7 @@ suite('User API tests', function () {
     assert.equal(newUser.firstName, returnedUser.firstName);
     assert.equal(newUser.lastName, returnedUser.lastName);
     assert.equal(newUser.email, returnedUser.email);
-    bcrypt.compareSync(newUser.password, returnedUser.password);
+    assert.isTrue(bcrypt.compareSync(newUser.password, returnedUser.password));
     assert.isDefined(returnedUser._id);
   });
 
@@ -68,7 +68,7 @@ suite('User API tests', function () {
       assert.equal(users[i].firstName, allUser[i].firstName);
       assert.equal(users[i].lastName, allUser[i].lastName);
       assert.equal(users[i].email, allUser[i].email);
-      bcrypt.compareSync(users[i].password, allUser[i].password);
+      assert.isTrue(bcrypt.compareSync(users[i].password, allUser[i].password));
     }
   });
 
@@ -76,4 +76,15 @@ suite('User API tests', function () {
   //   const allUsers = tweetService.getUsers();
   //   assert.equal(allUsers.length, 0);
   // });
+
+  test('update a user', function () {
+    let returnedUser = tweetService.createUser(newUser);
+    assert.equal(returnedUser.firstName, newUser.firstName);
+    returnedUser.firstName = 'update';
+    returnedUser.password = 'test';
+    tweetService.updateUser(returnedUser._id, returnedUser);
+    returnedUser = tweetService.getUser(returnedUser._id);
+    assert.equal(returnedUser.firstName, 'update');
+    assert.isTrue(bcrypt.compareSync('test', returnedUser.password));
+  });
 });

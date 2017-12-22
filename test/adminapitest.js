@@ -3,7 +3,6 @@
 const assert = require('chai').assert;
 const TweetService = require('./tweet-service');
 const fixtures = require('./fixtures.json');
-const _ = require('lodash');
 const bcrypt = require('bcrypt');
 
 suite('Admin API tests', function () {
@@ -25,7 +24,7 @@ suite('Admin API tests', function () {
     assert.equal(newAdmin.firstName, returnedAdmin.firstName);
     assert.equal(newAdmin.lastName, returnedAdmin.lastName);
     assert.equal(newAdmin.email, returnedAdmin.email);
-    bcrypt.compareSync(newAdmin.password, returnedAdmin.password);
+    assert.isTrue(bcrypt.compareSync(newAdmin.password, returnedAdmin.password));
     assert.isDefined(returnedAdmin._id);
   });
 
@@ -69,7 +68,7 @@ suite('Admin API tests', function () {
       assert.equal(admins[i].firstName, allAdmin[i].firstName);
       assert.equal(admins[i].lastName, allAdmin[i].lastName);
       assert.equal(admins[i].email, allAdmin[i].email);
-      bcrypt.compareSync(admins[i].password, allAdmin[i].password);
+      assert.isTrue(bcrypt.compareSync(admins[i].password, allAdmin[i].password));
     }
   });
 
@@ -77,4 +76,15 @@ suite('Admin API tests', function () {
   //   const allAdmins = tweetService.getAdmins();
   //   assert.equal(allAdmins.length, 0);
   // });
+
+  test('update a admin', function () {
+    let returnedAdmin = tweetService.createAdmin(newAdmin);
+    assert.equal(returnedAdmin.firstName, newAdmin.firstName);
+    returnedAdmin.firstName = 'update';
+    returnedAdmin.password = 'test';
+    tweetService.updateAdmin(returnedAdmin._id, returnedAdmin);
+    returnedAdmin = tweetService.getAdmin(returnedAdmin._id);
+    assert.equal(returnedAdmin.firstName, 'update');
+    assert.isTrue(bcrypt.compareSync('test', returnedAdmin.password));
+  });
 });
