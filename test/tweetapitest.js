@@ -77,45 +77,32 @@ suite('Tweet API tests', function () {
     assert(tweetService.getTweet(tweet._id) == null);
   });
 
-  // test('get all user tweets', function () {
-  //   const allUsersUrl = 'http://localhost:4000/api/users';
-  //   let res = request('GET', allUsersUrl);
-  //   const users = JSON.parse(res.getBody('utf8'));
-  //
-  //   const allUserTweetsUrl = 'http://localhost:4000/api/tweets/users/' + users[0]._id;
-  //   res = request('GET', allUserTweetsUrl);
-  //   const tweets = JSON.parse(res.getBody('utf8'));
-  //
-  //   assert.equal(2, tweets.length);
-  //   assert.equal(tweets[0].tweetText, 'First Tweet Test');
-  //   assert.equal(tweets[0].tweetDate, '2017-07-31T22:04:00.000Z');
-  //   assert.equal(tweets[0].tweetUser, users[0]._id);
-  //   assert.equal(tweets[1].tweetText, 'Second Tweet Test');
-  //   assert.equal(tweets[1].tweetDate, '2017-08-31T16:19:00.000Z');
-  //   assert.equal(tweets[1].tweetUser, users[0]._id);
-  // });
-  //
-  // test('delete all user tweets', function () {
-  //   // Get all users
-  //   const allUsersUrl = 'http://localhost:4000/api/users';
-  //   let res = request('GET', allUsersUrl);
-  //   const users = JSON.parse(res.getBody('utf8'));
-  //
-  //   // Get all tweets of homer id - should have 1 left due to 1 being deleted in delete test above
-  //   const allUserTweetsUrl = 'http://localhost:4000/api/tweets/users/' + users[0]._id;
-  //   res = request('GET', allUserTweetsUrl);
-  //   const tweets = JSON.parse(res.getBody('utf8'));
-  //
-  //   assert.equal(1, tweets.length);
-  //   assert.equal(tweets[0].tweetText, 'Second Tweet Test');
-  //   assert.equal(tweets[0].tweetDate, '2017-08-31T16:19:00.000Z');
-  //   assert.equal(tweets[0].tweetUser, users[0]._id);
-  //
-  //   request('DELETE', allUserTweetsUrl);
-  //
-  //   res = request('GET', allUserTweetsUrl);
-  //   const afterDeleteTweets = JSON.parse(res.getBody('utf8'));
-  //
-  //   assert.equal(0, afterDeleteTweets.length);
-  // });
+  test('get all user tweets', function () {
+    const users = tweetService.getUsers();
+    let userTweets = tweetService.getUserTweets(users[0]._id);
+    assert.equal(userTweets.length, 0);
+    for (let i = 0; i < tweets.length; i++) {
+      tweetService.createTweet(tweets[i]);
+    }
+
+    userTweets = tweetService.getUserTweets(users[0]._id);
+    assert.equal(userTweets.length, 3);
+    userTweets = tweetService.getUserTweets(users[1]._id);
+    assert.equal(userTweets.length, 0);
+  });
+
+  test('delete all user tweets', function () {
+    const users = tweetService.getUsers();
+    let userTweets = tweetService.getUserTweets(users[0]._id);
+    assert.equal(userTweets.length, 0);
+    for (let i = 0; i < tweets.length; i++) {
+      tweetService.createTweet(tweets[i]);
+    }
+
+    userTweets = tweetService.getUserTweets(users[0]._id);
+    assert.equal(userTweets.length, 3);
+    tweetService.deleteAllUserTweets(users[0]._id);
+    userTweets = tweetService.getUserTweets(users[0]._id);
+    assert.equal(userTweets.length, 0);
+  });
 });
