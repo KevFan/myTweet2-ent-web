@@ -6,19 +6,20 @@ const fixtures = require('./fixtures.json');
 const _ = require('lodash');
 
 suite('Tweet API tests', function () {
+  let users = fixtures.users;
   let tweets = fixtures.tweets;
   let newUser = fixtures.newUser;
 
   const tweetService = new TweetService('http://localhost:4000');
 
   beforeEach(function () {
-    tweetService.deleteAllUsers();
+    tweetService.login(users[0]);
     tweetService.deleteAllTweets();
   });
 
   afterEach(function () {
-    tweetService.deleteAllUsers();
     tweetService.deleteAllTweets();
+    tweetService.logout();
   });
 
   test('create a tweet', function () {
