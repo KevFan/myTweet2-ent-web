@@ -4,6 +4,7 @@ const Tweet = require('../models/tweet');
 const Boom = require('boom');
 const cloudinary = require('cloudinary');
 const deleteFromCloud = require('../utils/pictureHelpers');
+const fs = require('fs');
 
 /**
  * Find all tweets
@@ -68,28 +69,24 @@ exports.create = {
     strategy: 'jwt',
   },
 
-  payload: {
-    maxBytes: 209715200,
-    output: 'stream',
-    parse: true,
-  },
-
   handler: function (request, reply) {
     let tweetData = request.payload;
-    const stream = cloudinary.v2.uploader.upload_stream(function (error, uploadResult) {
-      console.log(uploadResult);
-      if (uploadResult) {
-        tweetData.tweetImage = uploadResult.url;
+    fs.writeFile('tempimg', tweetData.picture, (err) => {
+      if (!err) {
+        cloudinary.v2.uploader.upload('tempimg', (error, result) => {
+          if (result) {
+            tweetData.tweetImage = result.url;
+          }
+
+          Tweet.create(tweetData).then(newTweet => {
+            reply(newTweet).code(201);
+          }).catch(err => {
+            console.log(err);
+            reply(Boom.badImplementation('error creating tweet'));
+          });
+        });
       }
-
-      Tweet.create(tweetData).then(newTweet => {
-        reply(newTweet).code(201);
-      }).catch(err => {
-        reply(Boom.badImplementation('error creating tweet'));
-      });
     });
-
-    tweetData.picture.pipe(stream);
   },
 };
 
