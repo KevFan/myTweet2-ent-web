@@ -9,7 +9,9 @@ const deleteFromCloud = require('../utils/pictureHelpers');
  * Find all tweets
  */
 exports.findAll = {
-  auth: false,
+  auth: {
+    strategy: 'jwt',
+  },
 
   handler: function (request, reply) {
     Tweet.find({}).exec().then(tweets => {
@@ -24,7 +26,9 @@ exports.findAll = {
  * Find one tweet by id
  */
 exports.findOne = {
-  auth: false,
+  auth: {
+    strategy: 'jwt',
+  },
 
   handler: function (request, reply) {
     Tweet.findOne({ _id: request.params.id }).then(tweet => {
@@ -43,7 +47,9 @@ exports.findOne = {
  * Find all tweets associated with a userId
  */
 exports.findAllUser = {
-  auth: false,
+  auth: {
+    strategy: 'jwt',
+  },
 
   handler: function (request, reply) {
     Tweet.find({ tweetUser: request.params.userid }).then(tweets => {
@@ -58,7 +64,10 @@ exports.findAllUser = {
  * Create a tweet
  */
 exports.create = {
-  auth: false,
+  auth: {
+    strategy: 'jwt',
+  },
+
   payload: {
     maxBytes: 209715200,
     output: 'stream',
@@ -88,7 +97,9 @@ exports.create = {
  * Delete all tweets
  */
 exports.deleteAll = {
-  auth: false,
+  auth: {
+    strategy: 'jwt',
+  },
 
   handler: function (request, reply) {
     Tweet.find({}).then(foundTweets => {
@@ -109,7 +120,9 @@ exports.deleteAll = {
  * Delete one tweet by id
  */
 exports.deleteOne = {
-  auth: false,
+  auth: {
+    strategy: 'jwt',
+  },
 
   handler: function (request, reply) {
     Tweet.findOne({ _id: request.params.id }).then(foundTweet => {
@@ -127,7 +140,9 @@ exports.deleteOne = {
  * Delete all tweets associated with userId
  */
 exports.deleteAllUser = {
-  auth: false,
+  auth: {
+    strategy: 'jwt',
+  },
 
   handler: function (request, reply) {
     Tweet.find({ tweetUser: request.params.userid }).then(foundTweets => {

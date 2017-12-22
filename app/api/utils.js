@@ -1,4 +1,5 @@
 const jwt = require('jsonwebtoken');
+const User = require('../models/user');
 
 exports.createToken = function (user) {
   return jwt.sign({ id: user._id, email: user.email }, 'secretpasswordnotrevealedtoanyone', {
@@ -17,4 +18,16 @@ exports.decodeToken = function (token) {
   }
 
   return userInfo;
+};
+
+exports.validate = function (decoded, request, callback) {
+  User.findOne({ _id: decoded.id }).then(user => {
+    if (user != null) {
+      callback(null, true);
+    } else {
+      callback(null, false);
+    }
+  }).catch(err => {
+    callback(null, false);
+  });
 };

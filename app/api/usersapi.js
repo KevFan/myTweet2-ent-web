@@ -13,7 +13,9 @@ const utils = require('./utils.js');
  * Find all users
  */
 exports.find = {
-  auth: false,
+  auth: {
+    strategy: 'jwt',
+  },
 
   handler: function (request, reply) {
     User.find({}).exec().then(users => {
@@ -28,7 +30,9 @@ exports.find = {
  * Find one user by id
  */
 exports.findOne = {
-  auth: false,
+  auth: {
+    strategy: 'jwt',
+  },
 
   handler: function (request, reply) {
     User.findOne({ _id: request.params.id }).then(user => {
@@ -67,7 +71,9 @@ exports.create = {
  * Delete all users
  */
 exports.deleteAll = {
-  auth: false,
+  auth: {
+    strategy: 'jwt',
+  },
 
   handler: function (request, reply) {
     User.find({}).then(foundUsers => {
@@ -88,7 +94,9 @@ exports.deleteAll = {
  * Delete one user by id
  */
 exports.deleteOne = {
-  auth: false,
+  auth: {
+    strategy: 'jwt',
+  },
 
   handler: function (request, reply) {
     User.findOne({ _id: request.params.id }).then(foundUser => {
@@ -106,7 +114,9 @@ exports.deleteOne = {
  * Update a user by id
  */
 exports.update = {
-  auth: false,
+  auth: {
+    strategy: 'jwt',
+  },
 
   handler: function (request, reply) {
     let updateData = request.payload;
@@ -125,7 +135,9 @@ exports.update = {
  * Update a user profile picture by id
  */
 exports.updateProfilePicture = {
-  auth: false,
+  auth: {
+    strategy: 'jwt',
+  },
 
   payload: {
     maxBytes: 209715200,
@@ -155,7 +167,9 @@ exports.updateProfilePicture = {
  * Delete profile picture
  */
 exports.deleteProfilePicture = {
-  auth: false,
+  auth: {
+    strategy: 'jwt',
+  },
 
   handler: function (request, reply) {
 

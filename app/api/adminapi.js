@@ -9,7 +9,9 @@ const saltRounds = 10;
  * Find all admins
  */
 exports.find = {
-  auth: false,
+  auth: {
+    strategy: 'jwt',
+  },
 
   handler: function (request, reply) {
     Admin.find({}).exec().then(admins => {
@@ -24,7 +26,9 @@ exports.find = {
  * Find one admin by id
  */
 exports.findOne = {
-  auth: false,
+  auth: {
+    strategy: 'jwt',
+  },
 
   handler: function (request, reply) {
     Admin.findOne({ _id: request.params.id }).then(admin => {
@@ -43,7 +47,9 @@ exports.findOne = {
  * Create an admin
  */
 exports.create = {
-  auth: false,
+  auth: {
+    strategy: 'jwt',
+  },
 
   handler: function (request, reply) {
     const admin = new Admin(request.payload);
@@ -63,7 +69,9 @@ exports.create = {
  * Delete all admins
  */
 exports.deleteAll = {
-  auth: false,
+  auth: {
+    strategy: 'jwt',
+  },
 
   handler: function (request, reply) {
     Admin.remove({}).then(err => {
@@ -78,7 +86,9 @@ exports.deleteAll = {
  * Delete one admin by id
  */
 exports.deleteOne = {
-  auth: false,
+  auth: {
+    strategy: 'jwt',
+  },
 
   handler: function (request, reply) {
     Admin.remove({ _id: request.params.id }).then(admin => {
@@ -93,7 +103,9 @@ exports.deleteOne = {
  * Update an admin by id
  */
 exports.update = {
-  auth: false,
+  auth: {
+    strategy: 'jwt',
+  },
 
   handler: function (request, reply) {
     let updateData = request.payload;
