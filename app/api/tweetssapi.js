@@ -5,6 +5,7 @@ const Boom = require('boom');
 const cloudinary = require('cloudinary');
 const deleteFromCloud = require('../utils/pictureHelpers');
 const fs = require('fs');
+const utils = require('./utils.js');
 
 /**
  * Find all tweets
@@ -15,7 +16,7 @@ exports.findAll = {
   },
 
   handler: function (request, reply) {
-    Tweet.find({}).exec().then(tweets => {
+    Tweet.find({}).populate('tweetUser').then(tweets => {
       reply(tweets);
     }).catch(err => {
       reply(Boom.badImplementation('error accessing db'));
@@ -71,6 +72,7 @@ exports.create = {
 
   handler: function (request, reply) {
     let tweetData = request.payload;
+    tweetData.tweetUser = utils.getUserIdFromRequest(request);
     fs.writeFile('tempimg', tweetData.picture, (err) => {
       if (!err) {
         cloudinary.v2.uploader.upload('tempimg', (error, result) => {

@@ -26,6 +26,8 @@ suite('Tweet API tests', function () {
     tweetService.createTweet(tweets[0]);
     const returnedTweets = tweetService.getTweets();
     assert.equal(returnedTweets.length, 1);
+    assert.isDefined(returnedTweets[0].tweetUser);
+    assert.equal(returnedTweets[0].tweetUser.email, users[0].email);
     assert(_.some([returnedTweets[0]], tweets[0]), 'returned tweet must be a superset of tweets');
   });
 
