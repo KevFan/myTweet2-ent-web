@@ -11,6 +11,35 @@
   </a>
 </section>
 
+<section class="ui centered aligned statistics grid">
+  <section class="four wide column statistic">
+    <div class="value">
+      {{numUsers}}
+    </div>
+    <div class="label">
+      Users
+    </div>
+  </section>
+  <section class="four wide column statistic">
+    <div class="value">
+      {{numTweets}}
+    </div>
+    <div class="label">
+      Tweets
+    </div>
+  </section>
+  <section class="four wide column statistic">
+    <div class="value">
+      {{numFollows}}
+    </div>
+    <div class="label">
+      Followers/Followings
+    </div>
+  </section>
+</section>
+
+<div class="ui divider"></div>
+
 {{> listUsers}}
 
 <section class="ui modal" id="addUser"> <i class="close icon"></i>

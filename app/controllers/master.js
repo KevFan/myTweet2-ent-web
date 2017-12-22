@@ -1,4 +1,5 @@
 const User = require('../models/user');
+const Admin = require('../models/admin');
 const Tweet = require('../models/tweet');
 const Follow = require('../models/follow');
 const sortHelper = require('../utils/sort');
@@ -9,11 +10,31 @@ const deleteFromCloud = require('../utils/pictureHelpers');
  */
 exports.home = {
   handler: function (request, reply) {
-
-    User.find({}).then(allUsers => {
-      reply.view('adminDashboard', { title: 'Admin Dashboard', user: allUsers });
+    let admin = null;
+    let users = null;
+    let tweets = null;
+    Admin.findOne({ _id: request.auth.credentials.loggedInUser }).then(foundAdmin => {
+      admin = foundAdmin;
+      return User.find({});
+    }).then(allUsers => {
+      users = allUsers;
+      return Tweet.find({});
+    }).then(foundTweets => {
+      tweets = foundTweets;
+      return Follow.find({});
+    }).then(foundFollows => {
+      if (admin) {
+        reply.view('adminDashboard', {
+          title: 'Admin Dashboard', user: users, numUsers: users.length, numTweets: tweets.length,
+          numFollows: foundFollows.length,
+        });
+      } else {
+        console.log('Not an admin');
+        reply.redirect('/');
+      }
     }).catch(err => {
       reply.redirect('/');
+      console.log(err);
     });
   },
 };
@@ -58,11 +79,15 @@ exports.deleteUser = {
 exports.viewUser = {
   handler: function (request, reply) {
     const userId = request.params.id;
+    let admin = null;
     let followers = null;
     let user = null;
     let followings = null;
 
-    User.findOne({ _id: userId }).then(foundUser => {
+    Admin.findOne({ _id: request.auth.credentials.loggedInUser }).then(foundAdmin => {
+      admin = foundAdmin;
+      return User.findOne({ _id: userId });
+    }).then(foundUser => {
       user = foundUser;
       return Follow.find({ follower: userId }).populate('following');
     }).then(foundFollowings => {
@@ -80,18 +105,24 @@ exports.viewUser = {
 
       return Tweet.find({ tweetUser: { $in: userIds } }).populate('tweetUser');
     }).then(foundTweets => {
-      // Sets isCurrentUser and admin to true to allow admin to delete all/specific tweets and add
-      // user tweets
-      reply.view('dashboard', {
-        title: 'Tweet | Dashboard',
-        tweets: sortHelper.sortDateTimeNewToOld(foundTweets),
-        user: user,
-        isCurrentUser: true,
-        isAdmin: true,
-        followers: followers,
-        following: followings,
-      });
+      if (admin) {
+        // Sets isCurrentUser and admin to true to allow admin to delete all/specific tweets and add
+        // user tweets
+        reply.view('dashboard', {
+          title: 'Tweet | Dashboard',
+          tweets: sortHelper.sortDateTimeNewToOld(foundTweets),
+          user: user,
+          isCurrentUser: true,
+          isAdmin: true,
+          followers: followers,
+          following: followings,
+        });
+      } else {
+        console.log('Not an admin');
+        reply.redirect('/');
+      }
     }).catch(err => {
+      console.log(err);
       reply.redirect('/admin');
     });
   },
