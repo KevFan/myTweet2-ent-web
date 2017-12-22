@@ -12,6 +12,8 @@ module.exports = [
   { method: 'PUT', path: '/api/users/{id}', config: UsersApi.update },
   { method: 'PUT', path: '/api/profilePicture/{id}', config: UsersApi.updateProfilePicture },
   { method: 'DELETE', path: '/api/profilePicture/{id}', config: UsersApi.deleteProfilePicture },
+  { method: 'POST', path: '/api/users/authenticate', config: UsersApi.authenticate },
+
 
   { method: 'GET', path: '/api/tweets', config: TweetsApi.findAll },
   { method: 'GET', path: '/api/tweets/{id}', config: TweetsApi.findOne },
