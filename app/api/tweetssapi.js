@@ -4,15 +4,19 @@ const Tweet = require('../models/tweet');
 const Boom = require('boom');
 const cloudinary = require('cloudinary');
 const deleteFromCloud = require('../utils/pictureHelpers');
+const fs = require('fs');
+const utils = require('./utils.js');
 
 /**
  * Find all tweets
  */
 exports.findAll = {
-  auth: false,
+  auth: {
+    strategy: 'jwt',
+  },
 
   handler: function (request, reply) {
-    Tweet.find({}).exec().then(tweets => {
+    Tweet.find({}).populate('tweetUser').then(tweets => {
       reply(tweets);
     }).catch(err => {
       reply(Boom.badImplementation('error accessing db'));
@@ -24,7 +28,9 @@ exports.findAll = {
  * Find one tweet by id
  */
 exports.findOne = {
-  auth: false,
+  auth: {
+    strategy: 'jwt',
+  },
 
   handler: function (request, reply) {
     Tweet.findOne({ _id: request.params.id }).then(tweet => {
@@ -43,7 +49,9 @@ exports.findOne = {
  * Find all tweets associated with a userId
  */
 exports.findAllUser = {
-  auth: false,
+  auth: {
+    strategy: 'jwt',
+  },
 
   handler: function (request, reply) {
     Tweet.find({ tweetUser: request.params.userid }).then(tweets => {
@@ -58,29 +66,29 @@ exports.findAllUser = {
  * Create a tweet
  */
 exports.create = {
-  auth: false,
-  payload: {
-    maxBytes: 209715200,
-    output: 'stream',
-    parse: true,
+  auth: {
+    strategy: 'jwt',
   },
 
   handler: function (request, reply) {
     let tweetData = request.payload;
-    const stream = cloudinary.v2.uploader.upload_stream(function (error, uploadResult) {
-      console.log(uploadResult);
-      if (uploadResult) {
-        tweetData.tweetImage = uploadResult.url;
+    tweetData.tweetUser = utils.getUserIdFromRequest(request);
+    fs.writeFile('tempimg', tweetData.picture, (err) => {
+      if (!err) {
+        cloudinary.v2.uploader.upload('tempimg', (error, result) => {
+          if (result) {
+            tweetData.tweetImage = result.url;
+          }
+
+          Tweet.create(tweetData).then(newTweet => {
+            reply(newTweet).code(201);
+          }).catch(err => {
+            console.log(err);
+            reply(Boom.badImplementation('error creating tweet'));
+          });
+        });
       }
-
-      Tweet.create(tweetData).then(newTweet => {
-        reply(newTweet).code(201);
-      }).catch(err => {
-        reply(Boom.badImplementation('error creating tweet'));
-      });
     });
-
-    tweetData.picture.pipe(stream);
   },
 };
 
@@ -88,7 +96,9 @@ exports.create = {
  * Delete all tweets
  */
 exports.deleteAll = {
-  auth: false,
+  auth: {
+    strategy: 'jwt',
+  },
 
   handler: function (request, reply) {
     Tweet.find({}).then(foundTweets => {
@@ -109,7 +119,9 @@ exports.deleteAll = {
  * Delete one tweet by id
  */
 exports.deleteOne = {
-  auth: false,
+  auth: {
+    strategy: 'jwt',
+  },
 
   handler: function (request, reply) {
     Tweet.findOne({ _id: request.params.id }).then(foundTweet => {
@@ -127,7 +139,9 @@ exports.deleteOne = {
  * Delete all tweets associated with userId
  */
 exports.deleteAllUser = {
-  auth: false,
+  auth: {
+    strategy: 'jwt',
+  },
 
   handler: function (request, reply) {
     Tweet.find({ tweetUser: request.params.userid }).then(foundTweets => {
