@@ -13,12 +13,17 @@ suite('Tweet API tests', function () {
   const tweetService = new TweetService('http://localhost:4000');
 
   beforeEach(function () {
+    for (let user of users) {
+      tweetService.createUser(user);
+    }
+
     tweetService.login(users[0]);
     tweetService.deleteAllTweets();
   });
 
   afterEach(function () {
     tweetService.deleteAllTweets();
+    tweetService.deleteAllUsers();
     tweetService.logout();
   });
 
@@ -72,9 +77,9 @@ suite('Tweet API tests', function () {
 
   test('delete a tweet', function () {
     const tweet = tweetService.createTweet(tweets[0]);
-    assert(tweetService.getTweet(tweet._id) != null);
+    assert.isNotNull(tweetService.getTweet(tweet._id));
     tweetService.deleteOneTweet(tweet._id);
-    assert(tweetService.getTweet(tweet._id) == null);
+    assert.isNull(tweetService.getTweet(tweet._id));
   });
 
   test('get all user tweets', function () {

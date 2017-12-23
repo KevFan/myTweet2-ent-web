@@ -43,16 +43,12 @@ suite('Admin API tests', function () {
 
   test('delete a admin', function () {
     const admin = tweetService.createAdmin(newAdmin);
-    assert(tweetService.getAdmin(admin._id) != null);
+    assert.isNotNull(tweetService.getAdmin(admin._id));
     tweetService.deleteOneAdmin(admin._id);
-    assert(tweetService.getAdmin(admin._id) == null);
+    assert.isNull(tweetService.getAdmin(admin._id));
   });
 
   // test('get all admins', function () {
-  //   for (let admin of admins) {
-  //     tweetService.createAdmin(admin);
-  //   }
-  //
   //   const allAdmin = tweetService.getAdmins();
   //   assert.equal(allAdmin.length, admins.length);
   // });
