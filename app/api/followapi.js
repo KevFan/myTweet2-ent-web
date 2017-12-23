@@ -7,7 +7,9 @@ const Boom = require('boom');
  * Find all followers
  */
 exports.findFollowers = {
-  auth: false,
+  auth: {
+    strategy: 'jwt',
+  },
 
   handler: function (request, reply) {
     Follow.find({ following: request.params.id }).populate('follower').then(foundFollowers => {
@@ -26,7 +28,9 @@ exports.findFollowers = {
  * Find all followings
  */
 exports.findFollowings = {
-  auth: false,
+  auth: {
+    strategy: 'jwt',
+  },
 
   handler: function (request, reply) {
     Follow.find({ follower: request.params.id }).populate('following').then(foundFollowings => {
@@ -45,7 +49,9 @@ exports.findFollowings = {
  * Follow a user
  */
 exports.follow = {
-  auth: false,
+  auth: {
+    strategy: 'jwt',
+  },
 
   handler: function (request, reply) {
     const follow = new Follow(request.payload);
@@ -61,7 +67,9 @@ exports.follow = {
  * Unfollow a user
  */
 exports.unfollow = {
-  auth: false,
+  auth: {
+    strategy: 'jwt',
+  },
 
   handler: function (request, reply) {
     Follow.remove({ follower: request.params.userid, following: request.params.id }).then(err => {

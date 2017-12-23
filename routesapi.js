@@ -2,6 +2,7 @@ const UsersApi = require('./app/api/usersapi');
 const TweetsApi = require('./app/api/tweetssapi');
 const AdminsApi = require('./app/api/adminapi');
 const FollowApi = require('./app/api/followapi');
+const AuthApi = require('./app/api/authapi');
 
 module.exports = [
   { method: 'GET', path: '/api/users', config: UsersApi.find },
@@ -32,5 +33,7 @@ module.exports = [
   { method: 'GET', path: '/api/follow/following/{id}', config: FollowApi.findFollowings },
   { method: 'POST', path: '/api/follow', config: FollowApi.follow },
   { method: 'DELETE', path: '/api/follow/{userid}/{id}', config: FollowApi.unfollow },
+
+  { method: 'POST', path: '/api/users/authenticate', config: AuthApi.authenticate },
 
 ];

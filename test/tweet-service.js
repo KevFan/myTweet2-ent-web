@@ -59,6 +59,10 @@ class TweetService {
     return this.httpService.delete('/api/users/' + id);
   }
 
+  updateUser(id, updatedUser) {
+    return this.httpService.put('/api/users/' + id, updatedUser);
+  }
+
   // Admins
   getAdmins() {
     return this.httpService.get('/api/admins');
@@ -80,6 +84,10 @@ class TweetService {
     return this.httpService.delete('/api/admins/' + id);
   }
 
+  updateAdmin(id, updatedAdmin) {
+    return this.httpService.put('/api/admins/' + id, updatedAdmin);
+  }
+
   // Follows
   getFollowers(id) {
     return this.httpService.get('/api/follow/followers/' + id);
@@ -96,6 +104,14 @@ class TweetService {
 
   unfollow(userid, id) {
     return this.httpService.delete('/api/follow/' + userid + '/' + id);
+  }
+
+  login(user) {
+    return this.httpService.setAuth('/api/users/authenticate', user);
+  }
+
+  logout() {
+    this.httpService.clearAuth();
   }
 }
 

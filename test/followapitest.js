@@ -16,6 +16,7 @@ suite('Follow API tests', function () {
       tweetService.createUser(user);
     }
 
+    tweetService.login(users[0]);
     const allUser = tweetService.getUsers();
     newFollow = {
       'follower': allUser[0]._id,
@@ -25,6 +26,7 @@ suite('Follow API tests', function () {
 
   afterEach(function () {
     tweetService.deleteAllUsers();
+    tweetService.logout();
   });
 
   test('follow a user', function () {
