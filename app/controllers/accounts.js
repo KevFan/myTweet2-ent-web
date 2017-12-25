@@ -76,20 +76,20 @@ exports.register = {
 
     // A role parameter to correctly redirect if a admin adds a user
     const userRole = request.params.role;
-    bcrypt.hash(plaintextPassword, saltRounds, (err, hash) => {
+    bcrypt.hash(plaintextPassword, saltRounds).then(hash => {
       user.password = hash;
-      return user.save().then(newUser => {
-        console.log(newUser);
-        if (userRole === 'user') {
-          reply.redirect('/login');
-        } else if (userRole === 'admin') {
-          reply.redirect('/admin');
-        }
-      }).catch(err => {
-        console.log(err);
-        reply.redirect('/');
-      });
-    });
+      return user.save();
+    }).then(newUser => {
+      console.log(newUser);
+      if (userRole === 'user') {
+        reply.redirect('/login');
+      } else if (userRole === 'admin') {
+        reply.redirect('/admin');
+      }
+    }).catch(err => {
+      console.log(err);
+      reply.redirect('/');
+    });;
   },
 };
 
@@ -236,35 +236,49 @@ exports.updateSettings = {
     const userId = request.params.userid;
     const role = request.params.role;
     const editedUser = request.payload;
+    let user = null;
+    console.log(editedUser.password);
 
-    bcrypt.hash(editedUser.password, saltRounds, function (err, hash) {
-      editedUser.password = hash;
-
-      // Try finding user by userId and update
-      User.findOneAndUpdate({ _id: userId }, editedUser, { new: true }).then(updateUser => {
-        // If got updated user
-        if (updateUser) {
-          // determine if user is updating itself or admin updating user to send specific view
-          if (role === 'user') {
-            reply.view('settings', { title: 'Edit Account Settings', user: updateUser, role: 'user' });
-          } else if (role === 'admin') {
-            reply.redirect('/admin');
-          }
-        } else {
-          // Otherwise try finding admin and update
-          Admin.findOneAndUpdate({ _id: userId }, editedUser, { new: true }).then(updateAdmin => {
-            reply.view('settings', {
-              title: 'Edit Account Settings',
-              user: updateAdmin,
-              isAdmin: true,
-              role: 'admin',
-            });
-          });
+    User.findOne({ _id: userId }).then(foundUser => {
+      user = foundUser;
+      return Admin.findOne({ _id: userId });
+    }).then(foundAdmin => {
+      if (user && user.password === editedUser.password) {
+        user.firstName = editedUser.firstName;
+        user.lastName = editedUser.lastName;
+        user.email = editedUser.email;
+        return user.save();
+      } else if (user) {
+        return bcrypt.hash(editedUser.password, saltRounds).then(hash => {
+          editedUser.password = hash;
+          console.log(hash);
+          return User.findOneAndUpdate({ _id: userId }, editedUser, { new: true });
+        });
+      } else if (foundAdmin && foundAdmin.password === editedUser.password) {
+        foundAdmin.firstName = editedUser.firstName;
+        foundAdmin.lastName = editedUser.lastName;
+        foundAdmin.email = editedUser.email;
+        return foundAdmin.save();
+      } else if (foundAdmin) {
+        return bcrypt.hash(editedUser.password, saltRounds).then(hash => {
+          editedUser.password = hash;
+          console.log(hash);
+          return Admin.findOneAndUpdate({ _id: userId }, editedUser,  { new: true });
+        });
+      }
+    }).then(updatedUser => {
+      if (updatedUser instanceof User) {
+        if (role === 'user') {
+          reply.redirect('/settings');
+        } else if (role === 'admin') {
+          reply.redirect('/admin');
         }
-      }).catch(err => {
-        console.log('no user or admin with id: ' + userId);
-        reply.redirect('/');
-      });
+      } else {
+        reply.redirect('/settings');
+      }
+    }).catch(err => {
+      console.log('no user or admin with id: ' + userId);
+      reply.redirect('/');
     });
   },
 };
@@ -278,7 +292,7 @@ exports.updateSettings = {
  * @param reply
  */
 function compareAndRedirect(passwordAttempt, user, request, reply) {
-  bcrypt.compare(passwordAttempt, user.password, (err, isValid) => {
+  bcrypt.compare(passwordAttempt, user.password).then(isValid => {
     if (isValid) {
       request.cookieAuth.set(
           {
