@@ -126,14 +126,16 @@ exports.update = {
           return User.findOneAndUpdate({ _id: request.params.id }, updateData, { new: true });
         });
       } else {
-        foundUser.firstname = updateData.firstName;
-        foundUser.lastname = updateData.lastname;
+        foundUser.firstName = updateData.firstName;
+        foundUser.lastName = updateData.lastName;
         foundUser.email = updateData.email;
         return foundUser.save();
       }
     }).then(user => {
+      console.log(user);
       reply(user).code(200);
     }).catch(err => {
+      console.log(err);
       reply(Boom.notFound('error updating user'));
     });
   },

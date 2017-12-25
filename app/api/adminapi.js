@@ -116,8 +116,8 @@ exports.update = {
           return Admin.findOneAndUpdate({ _id: request.params.id }, updateData, { new: true });
         });
       } else {
-        foundAdmin.firstname = updateData.firstName;
-        foundAdmin.lastname = updateData.lastname;
+        foundAdmin.firstName = updateData.firstName;
+        foundAdmin.lastName = updateData.lastName;
         foundAdmin.email = updateData.email;
         return foundAdmin.save();
       }
