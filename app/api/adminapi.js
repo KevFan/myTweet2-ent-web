@@ -54,13 +54,13 @@ exports.create = {
   handler: function (request, reply) {
     const admin = new Admin(request.payload);
     const plaintextPassword = admin.password;
-    bcrypt.hash(plaintextPassword, saltRounds, (err, hash) => {
+    bcrypt.hash(plaintextPassword, saltRounds).then(hash => {
       admin.password = hash;
-      admin.save().then(newAdmin => {
-        reply(newAdmin).code(201);
-      }).catch(err => {
-        reply(Boom.badImplementation('error creating admin'));
-      });
+      admin.save();
+    }).then(newAdmin => {
+      reply(newAdmin).code(201);
+    }).catch(err => {
+      reply(Boom.badImplementation('error creating admin'));
     });
   },
 };
@@ -109,13 +109,22 @@ exports.update = {
 
   handler: function (request, reply) {
     let updateData = request.payload;
-    bcrypt.hash(updateData.password, saltRounds, (err, hash) => {
-      updateData.password = hash;
-      Admin.findOneAndUpdate({ _id: request.params.id }, updateData, { new: true }).then(admin => {
-        reply(admin).code(200);
-      }).catch(err => {
-        reply(Boom.notFound('error updating admin'));
-      });
+    Admin.findOne({ _id: request.params.id }).then(foundAdmin => {
+      if (foundAdmin.password !== updateData.password) {
+        return bcrypt.hash(updateData.password, saltRounds).then(hash => {
+          updateData.password = hash;
+          return Admin.findOneAndUpdate({ _id: request.params.id }, updateData, { new: true });
+        });
+      } else {
+        foundAdmin.firstname = updateData.firstName;
+        foundAdmin.lastname = updateData.lastname;
+        foundAdmin.email = updateData.email;
+        return foundAdmin.save();
+      }
+    }).then(admin => {
+      reply(admin).code(200);
+    }).catch(err => {
+      reply(Boom.notFound('error updating admin'));
     });
   },
 };
