@@ -76,7 +76,7 @@ exports.unfollow = {
   },
 
   handler: function (request, reply) {
-    Follow.remove({ follower: request.params.userid, following: request.params.id }).then(err => {
+    Follow.remove({ follower: utils.getUserIdFromRequest(request), following: request.params.id }).then(err => {
       reply().code(204);
     }).catch(err => {
       reply(Boom.badImplementation('error removing tweets'));
