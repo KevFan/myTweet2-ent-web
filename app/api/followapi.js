@@ -2,6 +2,7 @@
 
 const Follow = require('../models/follow');
 const Boom = require('boom');
+const utils = require('./utils.js');
 
 /**
  * Find all followers
@@ -55,7 +56,10 @@ exports.follow = {
 
   handler: function (request, reply) {
     const follow = new Follow(request.payload);
+    follow.follower = utils.getUserIdFromRequest(request);
     follow.save().then(newFollow => {
+      return Follow.findOne({ _id: newFollow._id }).populate('follower').populate('following');
+    }).then(newFollow => {
       reply(newFollow).code(201);
     }).catch(err => {
       reply(Boom.badImplementation('error creating follower/following'));
