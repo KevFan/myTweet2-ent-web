@@ -12,7 +12,7 @@ exports.findFollowers = {
   },
 
   handler: function (request, reply) {
-    Follow.find({ following: request.params.id }).populate('follower').then(foundFollowers => {
+    Follow.find({ following: request.params.id }).populate('follower').populate('following').then(foundFollowers => {
       if (foundFollowers) {
         reply(foundFollowers);
       }
@@ -33,7 +33,7 @@ exports.findFollowings = {
   },
 
   handler: function (request, reply) {
-    Follow.find({ follower: request.params.id }).populate('following').then(foundFollowings => {
+    Follow.find({ follower: request.params.id }).populate('following').populate('follower').then(foundFollowings => {
       if (foundFollowings) {
         reply(foundFollowings);
       }
