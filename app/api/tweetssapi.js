@@ -54,7 +54,7 @@ exports.findAllUser = {
   },
 
   handler: function (request, reply) {
-    Tweet.find({ tweetUser: request.params.userid }).then(tweets => {
+    Tweet.find({ tweetUser: request.params.userid }).populate('tweetUser').then(tweets => {
       reply(tweets);
     }).catch(err => {
       reply(Boom.notFound('id not found'));
@@ -81,6 +81,8 @@ exports.create = {
           }
 
           Tweet.create(tweetData).then(newTweet => {
+            return Tweet.findOne(newTweet).populate('tweetUser');
+          }).then(newTweet => {
             reply(newTweet).code(201);
           }).catch(err => {
             console.log(err);
