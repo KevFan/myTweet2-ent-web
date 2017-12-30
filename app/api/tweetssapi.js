@@ -72,7 +72,18 @@ exports.create = {
 
   handler: function (request, reply) {
     let tweetData = request.payload;
+    console.log(tweetData);
+    try {
+      // try parse marker to json object - due to multipart upload by android
+      tweetData.marker = JSON.parse(tweetData.marker);
+      console.log('parsed marker to json object');
+    } catch (e) {
+      console.log('No need to parse');
+    }
+
     tweetData.tweetUser = utils.getUserIdFromRequest(request);
+    console.log(tweetData);
+
     fs.writeFile('tempimg', tweetData.picture, (err) => {
       if (!err) {
         cloudinary.v2.uploader.upload('tempimg', (error, result) => {
@@ -84,6 +95,7 @@ exports.create = {
             return Tweet.findOne(newTweet).populate('tweetUser');
           }).then(newTweet => {
             reply(newTweet).code(201);
+            console.log(newTweet);
           }).catch(err => {
             console.log(err);
             reply(Boom.badImplementation('error creating tweet'));
