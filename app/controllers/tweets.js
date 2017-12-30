@@ -47,7 +47,7 @@ exports.home = {
         userIds.push(following.following._id);
       }
 
-      return Tweet.find({ tweetUser: { $in: userIds } }).populate('tweetUser').populate('marker');
+      return Tweet.find({ tweetUser: { $in: userIds } }).populate('tweetUser');
     }).then(foundTweets => {
       if (user) {
         reply.view('dashboard', {
@@ -117,7 +117,7 @@ exports.globalTimeline = {
     let user = null;
     User.findOne({ _id: request.auth.credentials.loggedInUser }).then(foundUser => {
       user = foundUser;
-      return Tweet.find({}).populate('tweetUser').populate('marker');
+      return Tweet.find({}).populate('tweetUser');
     }).then(allTweets => {
       if (user) {
         reply.view('globalTimeline', {
@@ -218,7 +218,7 @@ exports.viewUserTimeline = {
           userIds.push(following.following._id);
         }
 
-        return Tweet.find({ tweetUser: { $in: userIds } }).populate('tweetUser').populate('marker');
+        return Tweet.find({ tweetUser: { $in: userIds } }).populate('tweetUser');
       }).then(userTweets => {
         reply.view('dashboard', {
           title: user.firstName + ' ' + user.lastName + ' | TimeLine',

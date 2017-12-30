@@ -14,8 +14,11 @@ const tweetSchema = mongoose.Schema({
   },
   tweetImage: { type: String, default: '' },
   marker: {
-    type: mongoose.Schema.Types.ObjectId,
-    ref: 'Marker',
+    id: Number,
+    coords: {
+      latitude: Number,
+      longitude: Number,
+    },
   },
 });
 

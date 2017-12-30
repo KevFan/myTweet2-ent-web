@@ -109,7 +109,7 @@ exports.viewUser = {
         userIds.push(following.following._id);
       }
 
-      return Tweet.find({ tweetUser: { $in: userIds } }).populate('tweetUser').populate('marker');
+      return Tweet.find({ tweetUser: { $in: userIds } }).populate('tweetUser');
     }).then(foundTweets => {
       if (admin) {
         // Sets isCurrentUser and admin to true to allow admin to delete all/specific tweets and add
