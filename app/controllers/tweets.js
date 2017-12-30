@@ -117,12 +117,19 @@ exports.globalTimeline = {
     let user = null;
     User.findOne({ _id: request.auth.credentials.loggedInUser }).then(foundUser => {
       user = foundUser;
-      return Tweet.find({}).populate('tweetUser');
+      return Tweet.find({}).populate('tweetUser').populate('marker');
     }).then(allTweets => {
       if (user) {
-        reply.view('globalTimeline', { tweets: sortHelper.sortDateTimeNewToOld(allTweets) });
+        reply.view('globalTimeline', {
+          tweets: sortHelper.sortDateTimeNewToOld(allTweets),
+          mapKey: mapAPIKey.apiKey,
+        });
       } else {
-        reply.view('globalTimeline', { tweets: sortHelper.sortDateTimeNewToOld(allTweets), isAdmin: true });
+        reply.view('globalTimeline', {
+          tweets: sortHelper.sortDateTimeNewToOld(allTweets),
+          isAdmin: true,
+          mapKey: mapAPIKey.apiKey,
+        });
       }
     }).catch(err => {
       console.log('Tried to get all tweets but Something went wrong :(');
