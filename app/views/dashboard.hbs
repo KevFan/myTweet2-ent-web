@@ -4,6 +4,27 @@
   {{> menuUser _id="dashboard"}}
 {{/if}}
 
+<!--https://www.w3schools.com/graphics/google_maps_overlays.asp-->
+<div id="map" class="ui segment" style="width:100%;height:200px"></div>
+
+<script>
+  function myMap() {
+    const defaultCoords = new google.maps.LatLng(52.2474841,-7.1832407);
+    const mapCanvas = document.getElementById("map");
+    const mapOptions = {center: defaultCoords, zoom: 8};
+    const map = new google.maps.Map(mapCanvas, mapOptions);
+    {{#if tweets}}
+      {{#each tweets}}
+        var myCenter = new google.maps.LatLng({{marker.coords.latitude}},{{marker.coords.longitude}});
+        var marker = new google.maps.Marker({position: myCenter });
+        marker.setMap(map);
+      {{/each}}
+    {{/if}}
+  }
+</script>
+
+<script src="https://maps.googleapis.com/maps/api/js?key={{mapKey}}&callback=myMap"></script>
+
 <section class="ui stackable grid">
   <aside class="ui center aligned four wide column">
     <div class="ui segment">

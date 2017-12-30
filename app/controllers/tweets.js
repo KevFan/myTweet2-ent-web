@@ -14,6 +14,13 @@ catch (e) {
   console.log('Cloudinary credentials file not found, profile picture options disabled - see README.md');
 }
 
+let mapAPIKey = null;
+try {
+  mapAPIKey = require('../../.data/googleMapsAPkey.json');}
+catch (e) {
+  console.log('Google Maps API file not found');
+}
+
 /**
  * User home, finds the user details and all associated tweets
  */
@@ -40,7 +47,7 @@ exports.home = {
         userIds.push(following.following._id);
       }
 
-      return Tweet.find({ tweetUser: { $in: userIds } }).populate('tweetUser');
+      return Tweet.find({ tweetUser: { $in: userIds } }).populate('tweetUser').populate('marker');
     }).then(foundTweets => {
       if (user) {
         reply.view('dashboard', {
@@ -50,6 +57,7 @@ exports.home = {
           isCurrentUser: true,
           followers: followers,
           following: followings,
+          mapKey: mapAPIKey.apiKey,
         });
       } else {
         console.log('not a user');
@@ -203,7 +211,7 @@ exports.viewUserTimeline = {
           userIds.push(following.following._id);
         }
 
-        return Tweet.find({ tweetUser: { $in: userIds } }).populate('tweetUser');
+        return Tweet.find({ tweetUser: { $in: userIds } }).populate('tweetUser').populate('marker');
       }).then(userTweets => {
         reply.view('dashboard', {
           title: user.firstName + ' ' + user.lastName + ' | TimeLine',
@@ -212,6 +220,7 @@ exports.viewUserTimeline = {
           isCurrentUser: false,
           followers: followers,
           following: followings,
+          mapKey: mapAPIKey.apiKey,
         });
       }).catch(err => {
         console.log('Tried to view all tweets with user id : ' + userId + ' but something went wrong :(');

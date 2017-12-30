@@ -4,6 +4,12 @@ const Tweet = require('../models/tweet');
 const Follow = require('../models/follow');
 const sortHelper = require('../utils/sort');
 const deleteFromCloud = require('../utils/pictureHelpers');
+let mapAPIKey = null;
+try {
+  mapAPIKey = require('../../.data/googleMapsAPkey.json');}
+catch (e) {
+  console.log('Google Maps API file not found');
+}
 
 /**
  * Finds all the users in the database and renders it in admin dashboard view
@@ -103,7 +109,7 @@ exports.viewUser = {
         userIds.push(following.following._id);
       }
 
-      return Tweet.find({ tweetUser: { $in: userIds } }).populate('tweetUser');
+      return Tweet.find({ tweetUser: { $in: userIds } }).populate('tweetUser').populate('marker');
     }).then(foundTweets => {
       if (admin) {
         // Sets isCurrentUser and admin to true to allow admin to delete all/specific tweets and add
@@ -116,6 +122,7 @@ exports.viewUser = {
           isAdmin: true,
           followers: followers,
           following: followings,
+          mapKey: mapAPIKey.apiKey,
         });
       } else {
         console.log('Not an admin');
