@@ -32,24 +32,24 @@ suite('Follow API tests', function () {
   test('follow a user', function () {
     const allUser = tweetService.getUsers();
     const returnedFollow = tweetService.follow(newFollow);
-    assert.equal(allUser[0]._id, returnedFollow.follower);
-    assert.equal(allUser[1]._id, returnedFollow.following);
+    assert.deepEqual(allUser[0], returnedFollow.follower);
+    assert.deepEqual(allUser[1], returnedFollow.following);
     assert.isDefined(returnedFollow._id);
   });
 
   test('get followers', function () {
     const allUser = tweetService.getUsers();
     const follower1 = tweetService.follow(newFollow);
-    const follower2 = tweetService.getFollowers(follower1.following);
-    assert(_.some([follower1], newFollow), 'follower1 must be a superset of newFollow');
+    const follower2 = tweetService.getFollowers(follower1.following._id);
+    assert(_.some(follower1, allUser[0]), 'follower1 must be a superset of allUser[0]');
     assert.deepEqual(allUser[0], follower2[0].follower);
   });
 
   test('get followings', function () {
     const allUser = tweetService.getUsers();
     const follower1 = tweetService.follow(newFollow);
-    const follower2 = tweetService.getFollowings(follower1.follower);
-    assert(_.some([follower1], newFollow), 'follower1 must be a superset of newFollow');
+    const follower2 = tweetService.getFollowings(follower1.follower._id);
+    assert(_.some(follower1, allUser[0]), 'follower1 must be a superset of allUser[0]');
     assert.deepEqual(allUser[1], follower2[0].following);
   });
 
@@ -59,7 +59,7 @@ suite('Follow API tests', function () {
 
     assert(tweetService.getFollowings(allUser[0]._id) !== null);
     assert(tweetService.getFollowings(allUser[0]._id).length === 1);
-    tweetService.unfollow(allUser[0]._id, allUser[1]._id);
-    assert(tweetService.getFollowings(allUser[0]._id).length === 0);
+    tweetService.unfollow(allUser[1]._id);
+    assert.equal(tweetService.getFollowings(allUser[0]._id).length, 0);
   });
 });
