@@ -102,8 +102,8 @@ class TweetService {
 
   }
 
-  unfollow(userid, id) {
-    return this.httpService.delete('/api/follow/' + userid + '/' + id);
+  unfollow(id) {
+    return this.httpService.delete('/api/follow/' + id);
   }
 
   login(user) {

@@ -47,16 +47,17 @@ exports.findOne = {
  * Create an admin
  */
 exports.create = {
-  auth: {
-    strategy: 'jwt',
-  },
+  // auth: {
+  //   strategy: 'jwt',
+  // },
+  auth: false,
 
   handler: function (request, reply) {
     const admin = new Admin(request.payload);
     const plaintextPassword = admin.password;
     bcrypt.hash(plaintextPassword, saltRounds).then(hash => {
       admin.password = hash;
-      admin.save();
+      return admin.save();
     }).then(newAdmin => {
       reply(newAdmin).code(201);
     }).catch(err => {

@@ -13,6 +13,13 @@ const tweetSchema = mongoose.Schema({
     ref: 'User',
   },
   tweetImage: { type: String, default: '' },
+  marker: {
+    id: { type: Number, default: 1 },
+    coords: {
+      latitude: { type: Number, default: 0 },
+      longitude: { type: Number, default: 0 },
+    },
+  },
 });
 
 const Tweet = mongoose.model('Tweet', tweetSchema);

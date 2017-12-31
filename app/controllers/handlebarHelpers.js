@@ -14,3 +14,7 @@ Handlebars.registerHelper('formatDate', (dateString) => {
 Handlebars.registerHelper('isMyTweet', (userId, compareId) => {
   return userId === compareId;
 });
+
+Handlebars.registerHelper('notAtEquator', (lat, long) => {
+  return (lat !== 0) && (long !== 0);
+});
