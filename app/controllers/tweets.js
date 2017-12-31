@@ -14,6 +14,13 @@ catch (e) {
   console.log('Cloudinary credentials file not found, profile picture options disabled - see README.md');
 }
 
+let mapAPIKey = null;
+try {
+  mapAPIKey = require('../../.data/googleMapsAPkey.json');}
+catch (e) {
+  console.log('Google Maps API file not found');
+}
+
 /**
  * User home, finds the user details and all associated tweets
  */
@@ -50,6 +57,7 @@ exports.home = {
           isCurrentUser: true,
           followers: followers,
           following: followings,
+          mapKey: mapAPIKey.apiKey,
         });
       } else {
         console.log('not a user');
@@ -112,9 +120,16 @@ exports.globalTimeline = {
       return Tweet.find({}).populate('tweetUser');
     }).then(allTweets => {
       if (user) {
-        reply.view('globalTimeline', { tweets: sortHelper.sortDateTimeNewToOld(allTweets) });
+        reply.view('globalTimeline', {
+          tweets: sortHelper.sortDateTimeNewToOld(allTweets),
+          mapKey: mapAPIKey.apiKey,
+        });
       } else {
-        reply.view('globalTimeline', { tweets: sortHelper.sortDateTimeNewToOld(allTweets), isAdmin: true });
+        reply.view('globalTimeline', {
+          tweets: sortHelper.sortDateTimeNewToOld(allTweets),
+          isAdmin: true,
+          mapKey: mapAPIKey.apiKey,
+        });
       }
     }).catch(err => {
       console.log('Tried to get all tweets but Something went wrong :(');
@@ -212,6 +227,7 @@ exports.viewUserTimeline = {
           isCurrentUser: false,
           followers: followers,
           following: followings,
+          mapKey: mapAPIKey.apiKey,
         });
       }).catch(err => {
         console.log('Tried to view all tweets with user id : ' + userId + ' but something went wrong :(');

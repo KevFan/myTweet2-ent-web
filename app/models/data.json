@@ -43,17 +43,41 @@
     "one": {
       "tweetText": "First Tweet Test",
       "tweetDate": "2017-07-31 22:04:00.000Z",
-      "tweetUser": "->users.homer"
+      "tweetUser": "->users.homer",
+      "tweetImage": "",
+      "marker": {
+        "id": 1,
+        "coords": {
+          "latitude": 52.2492772,
+          "longitude": -7.122312
+        }
+      }
     },
     "two": {
       "tweetText": "Second Tweet Test",
       "tweetDate": "2017-08-31 16:19:00.000Z",
-      "tweetUser": "->users.homer"
+      "tweetUser": "->users.homer",
+      "tweetImage": "",
+      "marker": {
+        "id": 1,
+        "coords": {
+          "latitude": 52.2573666,
+          "longitude": -7.1052834
+        }
+      }
     },
     "three": {
       "tweetText": "Third Tweet Test",
       "tweetDate": "2017-09-16 20:54:00.000Z",
-      "tweetUser": "->users.marge"
+      "tweetUser": "->users.marge",
+      "tweetImage": "",
+      "marker": {
+        "id": 1,
+        "coords": {
+          "latitude": 52.2604902,
+          "longitude": -7.1074985
+        }
+      }
     }
   },
   "follows": {

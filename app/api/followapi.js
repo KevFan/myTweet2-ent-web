@@ -2,6 +2,7 @@
 
 const Follow = require('../models/follow');
 const Boom = require('boom');
+const utils = require('./utils.js');
 
 /**
  * Find all followers
@@ -12,7 +13,7 @@ exports.findFollowers = {
   },
 
   handler: function (request, reply) {
-    Follow.find({ following: request.params.id }).populate('follower').then(foundFollowers => {
+    Follow.find({ following: request.params.id }).populate('follower').populate('following').then(foundFollowers => {
       if (foundFollowers) {
         reply(foundFollowers);
       }
@@ -33,7 +34,7 @@ exports.findFollowings = {
   },
 
   handler: function (request, reply) {
-    Follow.find({ follower: request.params.id }).populate('following').then(foundFollowings => {
+    Follow.find({ follower: request.params.id }).populate('following').populate('follower').then(foundFollowings => {
       if (foundFollowings) {
         reply(foundFollowings);
       }
@@ -55,7 +56,10 @@ exports.follow = {
 
   handler: function (request, reply) {
     const follow = new Follow(request.payload);
+    follow.follower = utils.getUserIdFromRequest(request);
     follow.save().then(newFollow => {
+      return Follow.findOne({ _id: newFollow._id }).populate('follower').populate('following');
+    }).then(newFollow => {
       reply(newFollow).code(201);
     }).catch(err => {
       reply(Boom.badImplementation('error creating follower/following'));
@@ -72,7 +76,7 @@ exports.unfollow = {
   },
 
   handler: function (request, reply) {
-    Follow.remove({ follower: request.params.userid, following: request.params.id }).then(err => {
+    Follow.remove({ follower: utils.getUserIdFromRequest(request), following: request.params.id }).then(err => {
       reply().code(204);
     }).catch(err => {
       reply(Boom.badImplementation('error removing tweets'));

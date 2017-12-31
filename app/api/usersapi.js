@@ -54,14 +54,14 @@ exports.create = {
   handler: function (request, reply) {
     const user = new User(request.payload);
     const plaintextPassword = user.password;
-    bcrypt.hash(plaintextPassword, saltRounds, (err, hash) => {
+    bcrypt.hash(plaintextPassword, saltRounds).then(hash => {
       user.password = hash;
-      user.save().then(newUser => {
-        reply(newUser).code(201);
-      }).catch(err => {
-        reply(Boom.badImplementation('error creating user'));
-      });
-    });
+      return user.save();
+    }).then(newUser => {
+      reply(newUser).code(201);
+    }).catch(err => {
+      reply(Boom.badImplementation('error creating user'));
+    });;
   },
 };
 
@@ -118,13 +118,25 @@ exports.update = {
 
   handler: function (request, reply) {
     let updateData = request.payload;
-    bcrypt.hash(updateData.password, saltRounds, (err, hash) => {
-      updateData.password = hash;
-      User.findOneAndUpdate({ _id: request.params.id }, updateData, { new: true }).then(user => {
-        reply(user).code(200);
-      }).catch(err => {
-        reply(Boom.notFound('error updating user'));
-      });
+    console.log(updateData.password);
+    User.findOne({ _id: request.params.id }).then(foundUser => {
+      if (foundUser.password !== updateData.password) {
+        return bcrypt.hash(updateData.password, saltRounds).then(hash => {
+          updateData.password = hash;
+          return User.findOneAndUpdate({ _id: request.params.id }, updateData, { new: true });
+        });
+      } else {
+        foundUser.firstName = updateData.firstName;
+        foundUser.lastName = updateData.lastName;
+        foundUser.email = updateData.email;
+        return foundUser.save();
+      }
+    }).then(user => {
+      console.log(user);
+      reply(user).code(200);
+    }).catch(err => {
+      console.log(err);
+      reply(Boom.notFound('error updating user'));
     });
   },
 };
