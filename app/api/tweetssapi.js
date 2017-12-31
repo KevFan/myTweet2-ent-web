@@ -33,7 +33,7 @@ exports.findOne = {
   },
 
   handler: function (request, reply) {
-    Tweet.findOne({ _id: request.params.id }).then(tweet => {
+    Tweet.findOne({ _id: request.params.id }).populate('tweetUser').then(tweet => {
       if (tweet) {
         reply(tweet);
       }
