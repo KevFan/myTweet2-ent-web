@@ -111,3 +111,17 @@ exports.removeUserFollowings = {
     });
   },
 };
+
+exports.removeAllFollows = {
+  auth: {
+    strategy: 'jwt',
+  },
+
+  handler: function (request, reply) {
+    Follow.remove({}).then(err => {
+      reply().code(204);
+    }).catch(err => {
+      reply(Boom.badImplementation('error removing follows'));
+    });
+  },
+};
