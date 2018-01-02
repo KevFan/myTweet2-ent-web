@@ -79,7 +79,35 @@ exports.unfollow = {
     Follow.remove({ follower: utils.getUserIdFromRequest(request), following: request.params.id }).then(err => {
       reply().code(204);
     }).catch(err => {
-      reply(Boom.badImplementation('error removing tweets'));
+      reply(Boom.badImplementation('error removing follows'));
+    });
+  },
+};
+
+exports.removeUserFollowers = {
+  auth: {
+    strategy: 'jwt',
+  },
+
+  handler: function (request, reply) {
+    Follow.remove({ following: request.params.id }).then(err => {
+      reply().code(204);
+    }).catch(err => {
+      reply(Boom.badImplementation('error removing follows'));
+    });
+  },
+};
+
+exports.removeUserFollowings = {
+  auth: {
+    strategy: 'jwt',
+  },
+
+  handler: function (request, reply) {
+    Follow.remove({ follower: request.params.id }).then(err => {
+      reply().code(204);
+    }).catch(err => {
+      reply(Boom.badImplementation('error removing follows'));
     });
   },
 };
