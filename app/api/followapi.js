@@ -125,3 +125,17 @@ exports.removeAllFollows = {
     });
   },
 };
+
+exports.findAll = {
+  auth: {
+    strategy: 'jwt',
+  },
+
+  handler: function (request, reply) {
+    Follow.find({}).then(foundFollows => {
+      reply(foundFollows).code(201);
+    }).catch(err => {
+      reply(Boom.badImplementation('error removing follows'));
+    });
+  },
+};

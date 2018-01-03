@@ -36,6 +36,7 @@ module.exports = [
   { method: 'DELETE', path: '/api/follow/followers/{id}', config: FollowApi.removeUserFollowers },
   { method: 'DELETE', path: '/api/follow/following/{id}', config: FollowApi.removeUserFollowings },
   { method: 'DELETE', path: '/api/follow', config: FollowApi.removeAllFollows },
+  { method: 'GET', path: '/api/follow', config: FollowApi.findAll },
 
   { method: 'POST', path: '/api/users/authenticate', config: AuthApi.authenticate },
 
