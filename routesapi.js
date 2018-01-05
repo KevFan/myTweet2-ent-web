@@ -21,6 +21,7 @@ module.exports = [
   { method: 'DELETE', path: '/api/tweets', config: TweetsApi.deleteAll },
   { method: 'GET', path: '/api/tweets/users/{userid}', config: TweetsApi.findAllUser },
   { method: 'DELETE', path: '/api/tweets/users/{userid}', config: TweetsApi.deleteAllUser },
+  { method: 'GET', path: '/api/tweets/following', config: TweetsApi.findAllUserFollowing },
 
   { method: 'GET', path: '/api/admins', config: AdminsApi.find },
   { method: 'GET', path: '/api/admins/{id}', config: AdminsApi.findOne },
