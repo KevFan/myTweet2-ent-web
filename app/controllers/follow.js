@@ -19,6 +19,10 @@ exports.follow = {
   },
 };
 
+/**
+ * Unfollow a user
+ * @type {{handler: exports.unfollow.handler}}
+ */
 exports.unfollow = {
   handler: function (request, reply) {
     Follow.remove({ follower: request.auth.credentials.loggedInUser, following: request.params.id }).then(unFollowed => {
