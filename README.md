@@ -1,29 +1,41 @@
-# MyTweet Hapi
+# MyTweet v2 Hapi
 
-This project is a Microblog/twitter like web application built using the Hapi framework. Users can sign up to the application to write tweets of max 140 characters, view a global timeline of tweets and other users. 
+This project is a continuation of the first MyTweet application with additional features. Allowing server rendering of functionality, while also providing an API for cross application communication
 
-## Features
-* Users
-  * Create, read and delete tweets
-  * View global timeline of tweets (sorted by most recent tweet date)
-  * View profile and tweets of another user
-* Admin
-  * Create, read, update and delete user and tweets
-* Separate REST API
+## Additional Features
+* Follower / Following
+  * Follow another user
+    * Tweets from followed user is merges onto own dashboard for viewing
+  * Unfollow another user
+    * Removed following user tweets would no longer show on user dashbaord
+* Images - Cloudinary
+  * Images can be added to tweets and rendered in tweet listing
+  * User's may also update and delete existing profile image
+* Admin Stats
+  * Admin's now have a statistic view on number of users, tweets and follower/followings in the database
+* Maps - Google Maps
+  * Timeline and Global timeline view has google map that plots tweets with markers into map
+  * User's can click onto map markers for to tweet info
+* Bcrypt Password Hashing / Salting
+  * Passwords no longer saved - salt & hash saved instead 
+  * Authenticate pasword compared with saved hash/salt value
+* API Additions
   * Tweets API
-    * Find all, find one by id and find all associated with user id
-    * Delete all, delete one by id and delete all associated with user id
-    * Create tweet
-  * Users API
-    * Find one by id and find all users
-    * Delete one by id and delete all users
-    * Update one user by id
-    * Create user
-  * Admin API
-    * Find one by id and find all admins
-    * Delete one by id and delete all admins
-    * Update one admin by id
-    * Create admin
+    * Find all user and following tweets as one merged list of tweets
+    * Add tweet - can upload with tweet image
+  * User API
+    * Update profile picture
+    * Delete profile picture
+  * Follow API
+    * Find all user followers
+    * Find all user followings
+    * Follow another user
+    * Unfollow another user
+    * Find all follows
+    * Remove user followers associated with user id
+    * Remove user followings associated with user id
+    * Remove all follows
+  * Routes secured and authenticated with JWT
 
 ## Pre-requisites
 
@@ -39,9 +51,29 @@ To get started, you'll need to have the following requirements installed
 	# Ensure `mongod` is running, either as a service or in another shell
 	git clone <this repo>
 	npm install
-	npm start
 
-These commands would host the project locally and seed the database with default data.
+The project also requires the [Cloudinary](http://cloudinary.com/) services in order to upload and delete profile picture. In order to run, you will need to place a Cloudinary credentials file in the .data folder called .env.json:
+
+.data/.env.json
+```
+{
+  "cloudinary": {
+    "cloud_name": "YOURID",
+    "api_key": "YOURKEY",
+    "api_secret": "YOURSECRET"
+  }
+}
+```
+
+For Google Maps to render correctly, you would also need to provide an Google Map API key
+into the .data/googleMapsAPKey.json:
+```
+{
+  "apiKey": "YOUR_MAP_API_KEY"
+}
+```
+
+Finally start the project with `npm start` to host the project locally and seed the database with default data.
 The project can then be viewed on <http://localhost:4000/>
 
 ## Running tests
@@ -86,23 +118,20 @@ email: granpa@simpson.com
 password: secret
 ```
 
-Alternatively, for the deployed version, you can visit <https://mytweet-ent.herokuapp.com/>. The above default accounts can also be used to log in the deployed version if they have not been deleted.
+Alternatively, for the deployed version, you can visit <add link here/>. The above default accounts can also be used to log in the deployed version if they have not been deleted.
 
 ## List of Software + Technologies Used
 * [Node.js](https://nodejs.org/en/) - JavaScript runtime
-* [MongoDB 2.6.x / 3.2.x](https://docs.mongodb.com/manual/administration/install-community/) / [Mlab](https://mlab.com/welcome/) - document database
+* [MongoDB 2.6.x / 3.2.x](https://docs.mongodb.com/manual/administration/install-community/) 
 * [Hapi](https://hapijs.com/) - Node.js Web Framework
 * [mochawesome](https://www.npmjs.com/package/mochawesome) - Testing report
 * [Mocha](https://mochajs.org/) - JavaScript test framework
-* [Heroku](https://dashboard.heroku.com/) - Deployment platform
 * [WebStorm](https://www.jetbrains.com/webstorm/) - JavaScript IDE
 
 ## Improvements
-* Add user profile pictures
-* Secure the API - by knowing the endpoints, anyone can create, find, delete and update to the database. This includes deleting users and creating new admins etc.
-* Should seed the database before each test suit so that each test are independent of each other, and improve user friendliness of test command by not having to open two terminals
-* More user error checking, e.g. not allowing a user to sign up using an email address already used by another user + confirm deletes etc.
-* Use a Front End framework, such as REACT/Angular that would consume the REST Api and build a single page application instead of using application routes and server rendered views.
+* Allow add location to tweets by adding marker to map and getting latitude and longitude of marker
+* Selectively display follow or unfollow button if already following user
+* Image upload size currently limited - allow for large image size upload
 
 ## Authors:
 Kevin Fan ([KevFan](https://github.com/KevFan))
