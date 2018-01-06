@@ -21,6 +21,7 @@ module.exports = [
   { method: 'DELETE', path: '/api/tweets', config: TweetsApi.deleteAll },
   { method: 'GET', path: '/api/tweets/users/{userid}', config: TweetsApi.findAllUser },
   { method: 'DELETE', path: '/api/tweets/users/{userid}', config: TweetsApi.deleteAllUser },
+  { method: 'GET', path: '/api/tweets/following', config: TweetsApi.findAllUserFollowing },
 
   { method: 'GET', path: '/api/admins', config: AdminsApi.find },
   { method: 'GET', path: '/api/admins/{id}', config: AdminsApi.findOne },
@@ -33,6 +34,10 @@ module.exports = [
   { method: 'GET', path: '/api/follow/following/{id}', config: FollowApi.findFollowings },
   { method: 'POST', path: '/api/follow', config: FollowApi.follow },
   { method: 'DELETE', path: '/api/follow/{id}', config: FollowApi.unfollow },
+  { method: 'DELETE', path: '/api/follow/followers/{id}', config: FollowApi.removeUserFollowers },
+  { method: 'DELETE', path: '/api/follow/following/{id}', config: FollowApi.removeUserFollowings },
+  { method: 'DELETE', path: '/api/follow', config: FollowApi.removeAllFollows },
+  { method: 'GET', path: '/api/follow', config: FollowApi.findAll },
 
   { method: 'POST', path: '/api/users/authenticate', config: AuthApi.authenticate },
 

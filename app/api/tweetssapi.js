@@ -1,6 +1,7 @@
 'use strict';
 
 const Tweet = require('../models/tweet');
+const Follow = require('../models/follow');
 const Boom = require('boom');
 const cloudinary = require('cloudinary');
 const deleteFromCloud = require('../utils/pictureHelpers');
@@ -166,6 +167,32 @@ exports.deleteAllUser = {
       return Tweet.remove({ tweetUser: request.params.userid });
     }).then(err => {
       reply().code(204);
+    }).catch(err => {
+      reply(Boom.badImplementation('error removing tweets'));
+    });
+  },
+};
+
+/**
+ * Get All User and Following Tweets
+ */
+exports.findAllUserFollowing = {
+  auth: {
+    strategy: 'jwt',
+  },
+
+  handler: function (request, reply) {
+    const userId = utils.getUserIdFromRequest(request);
+    let userIds = [];
+    userIds.push(userId);
+    Follow.find({ follower: userId }).then(foundFollowings => {
+      for (let follow of foundFollowings) {
+        userIds.push(follow.following);
+      }
+
+      return Tweet.find({ tweetUser: { $in: userIds } }).populate('tweetUser');
+    }).then(foundTweets => {
+      reply(foundTweets);
     }).catch(err => {
       reply(Boom.badImplementation('error removing tweets'));
     });
