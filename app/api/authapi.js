@@ -4,6 +4,10 @@ const bcrypt = require('bcrypt');
 const utils = require('./utils.js');
 const Boom = require('boom');
 
+/**
+ * Authenticate user or admin
+ * @type {{auth: boolean, handler: exports.authenticate.handler}}
+ */
 exports.authenticate = {
   auth: false,
 
@@ -27,13 +31,22 @@ exports.authenticate = {
   },
 };
 
+/**
+ * Helper to perform the bcrypt compare for user or admin login
+ * @param passwordAttempt Password attempt
+ * @param foundUser found user or admin of email
+ * @param reply Reply to send back
+ */
 function bcryptTokenHepler(passwordAttempt, foundUser, reply) {
-  bcrypt.compare(passwordAttempt, foundUser.password, (err, isValid) => {
+  bcrypt.compare(passwordAttempt, foundUser.password).then(isValid => {
     if (isValid) {
       const token = utils.createToken(foundUser);
       reply({ success: true, token: token, user: foundUser }).code(201);
     } else {
       reply({ success: false, message: 'Authentication failed. User not found.' }).code(201);
     }
+  }).catch(err => {
+    reply({ success: false, message: err }).code(201);
+    console.log(err);
   });
 }
