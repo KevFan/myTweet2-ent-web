@@ -76,7 +76,6 @@ exports.home = {
  */
 exports.addTweet = {
   payload: {
-    maxBytes: 209715200,
     output: 'stream',
     parse: true,
   },
