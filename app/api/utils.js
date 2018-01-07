@@ -2,6 +2,11 @@ const jwt = require('jsonwebtoken');
 const User = require('../models/user');
 const Admin = require('../models/admin');
 
+/**
+ * Util to create JWT Token
+ * @param user User to create token
+ * @returns {*} Token
+ */
 exports.createToken = function (user) {
   return jwt.sign({ id: user._id, email: user.email }, 'secretpasswordnotrevealedtoanyone', {
     algorithm: 'HS256',
@@ -9,6 +14,11 @@ exports.createToken = function (user) {
   });
 };
 
+/**
+ * Util to decode token
+ * @param token Token to decode
+ * @returns {{}} Return user id from decoded token
+ */
 exports.decodeToken = function (token) {
   let userInfo = {};
   try {
@@ -21,6 +31,12 @@ exports.decodeToken = function (token) {
   return userInfo;
 };
 
+/**
+ * Util to validate decodes token to a user or admin in database
+ * @param decoded Decoded Token
+ * @param request Request
+ * @param callback Callback
+ */
 exports.validate = function (decoded, request, callback) {
   let user = null;
   User.findOne({ _id: decoded.id }).then(foundUser => {
@@ -39,6 +55,11 @@ exports.validate = function (decoded, request, callback) {
   });
 };
 
+/**
+ * Util to userId from request
+ * @param request Request
+ * @returns {*} user id extracted from request
+ */
 exports.getUserIdFromRequest = function (request) {
   let userId = null;
   try {

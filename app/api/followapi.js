@@ -79,7 +79,79 @@ exports.unfollow = {
     Follow.remove({ follower: utils.getUserIdFromRequest(request), following: request.params.id }).then(err => {
       reply().code(204);
     }).catch(err => {
-      reply(Boom.badImplementation('error removing tweets'));
+      reply(Boom.badImplementation('error removing follows'));
+    });
+  },
+};
+
+/**
+ * Remove all user followers
+ * @type {{auth: {strategy: string}, handler: exports.removeUserFollowers.handler}}
+ */
+exports.removeUserFollowers = {
+  auth: {
+    strategy: 'jwt',
+  },
+
+  handler: function (request, reply) {
+    Follow.remove({ following: request.params.id }).then(err => {
+      reply().code(204);
+    }).catch(err => {
+      reply(Boom.badImplementation('error removing follows'));
+    });
+  },
+};
+
+/**
+ * Remove all user followings
+ * @type {{auth: {strategy: string}, handler: exports.removeUserFollowings.handler}}
+ */
+exports.removeUserFollowings = {
+  auth: {
+    strategy: 'jwt',
+  },
+
+  handler: function (request, reply) {
+    Follow.remove({ follower: request.params.id }).then(err => {
+      reply().code(204);
+    }).catch(err => {
+      reply(Boom.badImplementation('error removing follows'));
+    });
+  },
+};
+
+/**
+ * Remove all follows
+ * @type {{auth: {strategy: string}, handler: exports.removeAllFollows.handler}}
+ */
+exports.removeAllFollows = {
+  auth: {
+    strategy: 'jwt',
+  },
+
+  handler: function (request, reply) {
+    Follow.remove({}).then(err => {
+      reply().code(204);
+    }).catch(err => {
+      reply(Boom.badImplementation('error removing follows'));
+    });
+  },
+};
+
+/**
+ * Find all follows
+ * @type {{auth: {strategy: string}, handler: exports.findAll.handler}}
+ */
+exports.findAll = {
+  auth: {
+    strategy: 'jwt',
+  },
+
+  handler: function (request, reply) {
+    Follow.find({}).then(foundFollows => {
+      reply(foundFollows).code(201);
+    }).catch(err => {
+      reply(Boom.badImplementation('error finding all follows'));
     });
   },
 };

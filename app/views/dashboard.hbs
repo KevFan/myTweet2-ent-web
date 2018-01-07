@@ -67,16 +67,19 @@
             </button>
           </a>
         {{else}}
-          <form action="/follow" method="POST" style="display: inline;">
-            <button name="following" value="{{user._id}}" class="circular ui icon teal button item">
-              <i class="add user icon"></i>
-            </button>
-          </form>
-          <a href="/follow/{{user._id}}">
-            <button class="circular ui icon red button item">
-              <i class="remove user icon"></i>
-            </button>
-          </a>
+          {{# if alreadyFollowing }}
+            <a href="/follow/{{user._id}}">
+              <button class="circular ui icon red button item">
+                <i class="remove user icon"></i>
+              </button>
+            </a>
+          {{else}}
+            <form action="/follow" method="POST" style="display: inline;">
+              <button name="following" value="{{user._id}}" class="circular ui icon teal button item">
+                <i class="add user icon"></i>
+              </button>
+            </form>
+          {{/if}}
         {{/if}}
       </div>
     {{> listTweets}}

@@ -47,10 +47,9 @@ exports.findOne = {
  * Create an admin
  */
 exports.create = {
-  // auth: {
-  //   strategy: 'jwt',
-  // },
-  auth: false,
+  auth: {
+    strategy: 'jwt',
+  },
 
   handler: function (request, reply) {
     const admin = new Admin(request.payload);

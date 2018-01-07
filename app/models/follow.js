@@ -3,7 +3,7 @@
 const mongoose = require('mongoose');
 
 /**
- * Tweet mongoose schema/model
+ * Follow mongoose schema/model
  */
 const followSchema = mongoose.Schema({
   follower: {
