@@ -1,6 +1,6 @@
 # MyTweet v2 Hapi
 
-This project is a continuation of the first MyTweet application with additional features. Allowing server rendering of functionality, while also providing an API for cross application communication
+This project is a continuation of the first MyTweet application with additional features. Allows server rendering of functionality, while also providing an API for cross application communication.
 
 ## Additional Features
 * Follower / Following
@@ -118,7 +118,7 @@ email: granpa@simpson.com
 password: secret
 ```
 
-Alternatively, for the deployed version, you can visit <add link here/>. The above default accounts can also be used to log in the deployed version if they have not been deleted.
+Alternatively, for the deployed version, you can visit http://34.242.209.100. The above default accounts can also be used to log in the deployed version if they have not been deleted.
 
 ## List of Software + Technologies Used
 * [Node.js](https://nodejs.org/en/) - JavaScript runtime
@@ -130,8 +130,6 @@ Alternatively, for the deployed version, you can visit <add link here/>. The abo
 
 ## Improvements
 * Allow add location to tweets by adding marker to map and getting latitude and longitude of marker
-* Selectively display follow or unfollow button if already following user
-* Image upload size currently limited - allow for large image size upload
 
 ## Authors:
 Kevin Fan ([KevFan](https://github.com/KevFan))
