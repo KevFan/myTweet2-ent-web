@@ -76,7 +76,6 @@ exports.home = {
  */
 exports.addTweet = {
   payload: {
-    maxBytes: 209715200,
     output: 'stream',
     parse: true,
   },
@@ -220,6 +219,14 @@ exports.viewUserTimeline = {
 
         return Tweet.find({ tweetUser: { $in: userIds } }).populate('tweetUser');
       }).then(userTweets => {
+        let alreadyFollowing = false;
+        for (let follow of followers) {
+          if (follow.follower._id == request.auth.credentials.loggedInUser) {
+            alreadyFollowing = true;
+            break;
+          }
+        }
+
         reply.view('dashboard', {
           title: user.firstName + ' ' + user.lastName + ' | TimeLine',
           tweets: sortHelper.sortDateTimeNewToOld(userTweets),
@@ -228,6 +235,7 @@ exports.viewUserTimeline = {
           followers: followers,
           following: followings,
           mapKey: mapAPIKey.apiKey,
+          alreadyFollowing: alreadyFollowing,
         });
       }).catch(err => {
         console.log('Tried to view all tweets with user id : ' + userId + ' but something went wrong :(');

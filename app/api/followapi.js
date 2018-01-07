@@ -84,6 +84,10 @@ exports.unfollow = {
   },
 };
 
+/**
+ * Remove all user followers
+ * @type {{auth: {strategy: string}, handler: exports.removeUserFollowers.handler}}
+ */
 exports.removeUserFollowers = {
   auth: {
     strategy: 'jwt',
@@ -98,6 +102,10 @@ exports.removeUserFollowers = {
   },
 };
 
+/**
+ * Remove all user followings
+ * @type {{auth: {strategy: string}, handler: exports.removeUserFollowings.handler}}
+ */
 exports.removeUserFollowings = {
   auth: {
     strategy: 'jwt',
@@ -112,6 +120,10 @@ exports.removeUserFollowings = {
   },
 };
 
+/**
+ * Remove all follows
+ * @type {{auth: {strategy: string}, handler: exports.removeAllFollows.handler}}
+ */
 exports.removeAllFollows = {
   auth: {
     strategy: 'jwt',
@@ -126,6 +138,10 @@ exports.removeAllFollows = {
   },
 };
 
+/**
+ * Find all follows
+ * @type {{auth: {strategy: string}, handler: exports.findAll.handler}}
+ */
 exports.findAll = {
   auth: {
     strategy: 'jwt',
@@ -135,7 +151,7 @@ exports.findAll = {
     Follow.find({}).then(foundFollows => {
       reply(foundFollows).code(201);
     }).catch(err => {
-      reply(Boom.badImplementation('error removing follows'));
+      reply(Boom.badImplementation('error finding all follows'));
     });
   },
 };
