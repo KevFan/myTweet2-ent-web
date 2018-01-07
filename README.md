@@ -84,7 +84,6 @@ To run tests enter:
  # Ensure the project is hosted locally and database seeded (see getting started)
  # Open another terminal
  npm test
-
  ```
 
 Mochawesome test reports are also generated and included which can be found in the project directory:
@@ -135,4 +134,4 @@ Alternatively, for the deployed version, you can visit http://34.242.209.100. Th
 Kevin Fan ([KevFan](https://github.com/KevFan))
 
 ## Version/Date:
-05th November 2017
+7th January 2018
